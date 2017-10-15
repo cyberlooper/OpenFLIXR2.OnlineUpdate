@@ -1,0 +1,30 @@
+#!/bin/bash
+THISUSER=$(whoami)
+    if [ $THISUSER != 'root' ]
+        then
+            echo 'You must use sudo to run this script, sorry!'
+           exit 1
+    fi
+
+exec 1> >(tee -a /var/log/openflixrupdate/a_update_1.log) 2>&1
+TODAY=$(date)
+echo "-----------------------------------------------------"
+echo "Date:          $TODAY"
+echo "-----------------------------------------------------"
+
+## OpenFLIXR Update version 2.0.1
+
+#misc
+bash /opt/openflixr/apt-get-queue ietskleins
+
+## update version
+crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.0.1
+
+## let system know update has been installed
+touch /opt/update/doneupdate/a_update_1
+
+# update
+bash /opt/openflixr/updatewkly.sh
+
+# reboot system just to be sure
+reboot now
