@@ -15,13 +15,13 @@ echo "-----------------------------------------------------"
 ## OpenFLIXR Update version 2.0.1
 
 #misc
-bash /opt/openflixr/apt-get-queue ietskleins
+# bash /opt/openflixr/apt-get-queue ietskleins
 
 ## update version
-crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.0.1
+# crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.0.1
 
 ## let system know update has been installed
-touch /opt/update/doneupdate/a_update_1
+# touch /opt/update/doneupdate/a_update_1
 
 # update
 bash /opt/openflixr/updatewkly.sh
