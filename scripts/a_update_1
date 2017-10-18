@@ -13,3 +13,5 @@ echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
 ## OpenFLIXR Update version 2.0.0
+## let system know update has been installed
+touch /opt/update/doneupdate/a_update_1
