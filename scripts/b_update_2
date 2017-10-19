@@ -12,7 +12,7 @@ echo "-----------------------------------------------------"
 echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
-## OpenFLIXR Update version 2.0.1
+## OpenFLIXR Update version 2.0
 # script updates
 cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
 chmod +x /opt/openflixr/updatewkly.sh
@@ -24,9 +24,12 @@ chmod +x /opt/openflixr/ipaddress
 ## fixes
 rm /etc/dhcpcd.conf
 
+## updates
+# bash /opt/openflixr/apt-get-queue xmlstarlet
+
 ## update version
-sed -i 's/2.*/2.0.1 You Only Live Twice/' /opt/openflixr/version
-crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.0.1
+sed -i 's/2.*/2.0 You Only Live Twice/' /opt/openflixr/version
+crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.0
 version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
 sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
 
