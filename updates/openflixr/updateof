@@ -134,8 +134,9 @@ echo ""
 echo "Cleanup:"
 rm /usr/share/nginx/html/setup/setup.sh 2> /dev/null
 echo ""
-echo "Network Hang fix:"
+echo "hotfixes:"
 /sbin/ethtool -K eth0 gso off gro off tso off
+service home-assistant restart 
 echo ""
 echo "Set Version"
 version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
@@ -143,3 +144,6 @@ sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr
 
 ## User script
 bash /opt/openflixr/userscript.sh
+
+## Update OpenFLIXR Online
+updateopenflixr
