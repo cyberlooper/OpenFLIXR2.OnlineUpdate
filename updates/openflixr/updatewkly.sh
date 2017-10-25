@@ -2,19 +2,18 @@
 THISUSER=$(whoami)
     if [ $THISUSER != 'root' ]
         then
-            echo 'You must use sudo to run this script, sorry!'
+            printf 'You must use sudo to run this script, sorry!'
             exit 1
     fi
 
 exec 1> >(tee -a /var/log/updatewkly.log) 2>&1
 TODAY=$(date)
-echo "-----------------------------------------------------"
-echo "Date:          $TODAY"
-echo "-----------------------------------------------------"
+printf "-----------------------------------------------------"
+printf "Date:          $TODAY"
+printf "-----------------------------------------------------"
 
 ## System
-echo ""
-echo "OS update:"
+printf "\n OS update:"
 apt-get clean -y
 sudo apt-get autoclean -y
 apt-get autoremove --purge -y
@@ -27,8 +26,7 @@ rm /etc/apt/apt.conf.d/50unattended-upgrades.ucftmp
 dpkg --configure -a
 
 ## Spotweb
-echo ""
-echo "Spotweb:"
+printf "\n Spotweb:"
 cd /tmp/
 wget https://github.com/spotweb/spotweb/tarball/master
 tar -xvzf master
@@ -39,8 +37,7 @@ cd /var/www/spotweb/bin/
 php upgrade-db.php
 
 ## Jackett
-echo ""
-echo "Jackett:"
+printf "\n Jackett:"
 service jackett stop
 cd /tmp/
 rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
@@ -53,8 +50,7 @@ rm Jackett.Binaries.Mono.tar.gz*
 service jackett start
 
 ## PlexRequests
-echo ""
-echo "Plexrequests.net:"
+printf "\n Plexrequests.net:"
 service plexrequestsnet stop
 cd /tmp/
 plexrequestsver=$(wget -q https://github.com/tidusjar/Ombi/releases/latest -O - | grep -E \/tag\/ | awk -F "[<>]" '{print $3}' | cut -c 6- | sed -n '2p')
@@ -66,8 +62,7 @@ rm -rf Release/
 service plexrequestsnet start
 
 ## Radarr
-echo ""
-echo "Radarr:"
+printf "\n Radarr:"
 service radarr stop
 cd /tmp/
 wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 )
@@ -78,23 +73,20 @@ rm -rf Radarr/
 service radarr start
 
 ## NZBget
-echo ""
-echo "NZBget:"
+printf "\n NZBget:"
 cd /tmp
 wget https://nzbget.net/download/nzbget-latest-bin-linux.run
 sh nzbget-latest-bin-linux.run --destdir /opt/nzbget
 
 ## Plex Media Server
-echo ""
-echo "Plex Media Server:"
+printf "\n Plex Media Server:"
 cd /opt/plexupdate
 bash plexupdate.sh -p
 dpkg -i /tmp/plexmediaserver*.deb 2> /dev/null
 rm /tmp/plexmediaserver*
 
 ## Netdata
-echo ""
-echo "Netdata:"
+printf "\n Netdata:"
 service netdata stop
 killall netdata
 cd /opt/netdata.git/
@@ -104,22 +96,18 @@ sudo bash netdata-installer.sh --dont-wait --install /opt
 
 ##
 # Update blocklist
-echo ""
-echo "IP Blocklist:"
+printf "\n IP Blocklist:"
 bash /opt/openflixr/blocklist.sh
 
 ## Pi-hole
-echo ""
-echo "Pi-hole:"
+printf "\n Pi-hole:"
 pihole -up
 
 ## Update everything else
-echo ""
-echo "updateof:"
+printf "\n updateof:"
 cd /opt/openflixr
 bash updateof
-echo ""
-echo "Node / PIP / NPM:"
+printf "\n Node / PIP / NPM:"
 cd /usr/lib/node_modules
 sudo -H npm install npm@latest
 cd /usr/lib/node_modules/rtail
@@ -132,13 +120,11 @@ sudo -H pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip install
 sudo -H pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip3 install -U
 
 ## Maintenance tasks
-echo ""
-echo "Cleanup:"
+printf "\n Cleanup:"
 cd /opt/openflixr
 bash cleanup.sh
 
-echo ""
-echo "Nginx fix"
+printf "\n Nginx fix"
 mkdir /var/log/nginx
 
 ## Update OpenFLIXR Online
