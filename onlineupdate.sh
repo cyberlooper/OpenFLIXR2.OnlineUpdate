@@ -2,30 +2,27 @@
 THISUSER=$(whoami)
     if [ $THISUSER != 'root' ]
         then
-            echo 'You must use sudo to run this script, sorry!'
+            printf 'You must use sudo to run this script, sorry!'
            exit 1
     fi
 
 mkdir /var/log/openflixrupdate
 exec 1> >(tee -a /var/log/openflixrupdate/onlineupdate.log) 2>&1
 TODAY=$(date)
-echo "-----------------------------------------------------"
-echo "Date:          $TODAY"
-echo "-----------------------------------------------------"
+printf "-----------------------------------------------------"
+printf "Date:          $TODAY"
+printf "-----------------------------------------------------"
 
 ## OpenFLIXR Online Update version 1.0.3
-echo ""
-echo "OpenFLIXR Wizard Update:"
+printf "\n OpenFLIXR Wizard Update:"
 cd /usr/share/nginx/html/setup
 git reset --hard
 git pull
-echo ""
-echo "OpenFLIXR Online Update:"
+printf "\n OpenFLIXR Online Update:"
 cd /opt/update
 chmod -x /opt/update/scripts/*
 git pull
-echo ""
-echo "OpenFLIXR installing updates:"
+printf "\n OpenFLIXR installing updates:"
 chmod +x /opt/update/scripts/*
 
 cd /opt/update/doneupdate/

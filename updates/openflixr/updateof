@@ -1,144 +1,115 @@
 #!/bin/bash
 exec 1> >(tee -a /var/log/updateof.log) 2>&1
 TODAY=$(date)
-echo "-----------------------------------------------------"
-echo "Date:	     $TODAY"
-echo "-----------------------------------------------------"
+printf "-----------------------------------------------------"
+printf "Date:	     $TODAY"
+printf "-----------------------------------------------------"
 
 THISUSER=$(whoami)
     if [ $THISUSER != 'root' ]
         then
-            echo 'You must use sudo to run this script, sorry!'
+            printf 'You must use sudo to run this script, sorry!'
             exit  1
     fi
 
 ## Pip Apps
-echo ""
-echo "Home-Assistant:"
+printf "\n Home-Assistant:"
 sudo -H pip3 install --upgrade homeassistant
-echo ""
-echo "Mopidy-Mopify:"
+printf "\n Mopidy-Mopify:"
 sudo -H pip install --upgrade Mopidy
-echo ""
-echo "Mopidy-Mopify:"
+printf "\n Mopidy-Mopify:"
 sudo -H pip install --upgrade Mopidy-Mopify
-echo ""
-echo "Mopidy-Moped:"
+printf "\n Mopidy-Moped:"
 sudo -H pip install --upgrade Mopidy-Moped
-echo ""
-echo "Mopidy-Spotmop:"
+printf "\n Mopidy-Spotmop:"
 sudo -H pip install --upgrade Mopidy-Spotmop
-echo ""
-echo "pafy:"
+printf "\n pafy:"
 sudo -H pip install --upgrade pafy
-echo ""
-echo "Mopidy-WebSettings"
+printf "\n Mopidy-WebSettings"
 sudo -H pip install --upgrade Mopidy-WebSettings
 
 ## Create Download dirs when mounted to a network share
 cd /opt/openflixr
-echo ""
-echo "create download dirs:"
+printf "\n create download dirs:"
 sudo bash createdirs
 
 ## Git Apps
-echo ""
-echo "OpenFLIXR Wizard Update:"
+printf "\n OpenFLIXR Wizard Update:"
 cd /usr/share/nginx/html/setup
 git reset --hard
 git pull
-echo ""
-echo "OpenFLIXR Landing Page:"
+printf "\n OpenFLIXR Landing Page:"
 cd /usr/share/nginx/html/openflixr
 git reset --hard
 git pull
-echo ""
-echo "CouchPotato:"
+printf "\n CouchPotato:"
 cd /opt/CouchPotato
 git pull
 /usr/sbin/service couchpotato restart
-echo ""
-echo "Headphones:"
+printf "\n Headphones:"
 cd /opt/headphones
 git pull
 /usr/sbin/service headphones restart
-echo ""
-echo "HTPC Manager:"
+printf "\n HTPC Manager:"
 cd /opt/HTPCManager
 git pull
 /usr/sbin/service htpcmanager stop
 sleep 3
 /usr/sbin/service htpcmanager start
-echo ""
-echo "Mylar:"
+printf "\n Mylar:"
 cd /opt/Mylar
 git pull
 /usr/sbin/service mylar restart
-echo ""
-echo "Plexpy:"
+printf "\n Plexpy:"
 cd /opt/plexpy
 git pull
 /usr/sbin/service plexpy restart
-echo ""
-echo "SickRage:"
+printf "\n SickRage:"
 cd /opt/sickrage
 git fetch --all
 git reset --hard origin/master
 git pull origin master
-echo ""
-echo "Letsencrypt:"
+printf "\n Letsencrypt:"
 cd /opt/letsencrypt
 git reset --hard
 git pull
-echo ""
-echo "AutoSub:"
+printf "\n AutoSub:"
 cd /opt/autosub
 git pull
 /usr/sbin/service autosub restart
-echo ""
-echo "ComicReader:"
+printf "\n ComicReader:"
 cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/ComicReader.bundle
 git pull
-echo ""
-echo "PlexRequestChannel:"
+printf "\n PlexRequestChannel:"
 cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/PlexRequestChannel.bundle
 git pull
-echo ""
-echo "Sub-Zero:"
+printf "\n Sub-Zero:"
 cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/
 rm -rf Sub-Zero.bundle
 git clone https://github.com/pannal/Sub-Zero.bundle
 /usr/sbin/service plexmediaserver restart
-echo ""
-echo "WebTools:"
+printf "\n WebTools:"
 cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/WebTools.bundle
 git pull
-echo ""
-echo "Groovy:"
+printf "\n Groovy:"
 cd /opt/groovy
 git pull
-echo ""
-echo "NZBhydra:"
+printf "\n NZBhydra:"
 cd /opt/nzbhydra
 git pull
-echo ""
-echo "LazyLibrarian:"
+printf "\n LazyLibrarian:"
 cd /opt/LazyLibrarian
 git reset --hard
 git pull
-echo ""
-echo "Plexupdate:"
+printf "\n Plexupdate:"
 cd /opt/plexupdate
 git pull
-echo ""
-echo "Cleanup:"
+printf "\n Cleanup:"
 rm /usr/share/nginx/html/setup/setup.sh 2> /dev/null
-echo ""
-echo "hotfixes:"
+printf "\n hotfixes:"
 /sbin/ethtool -K eth0 gso off gro off tso off
-service home-assistant restart 
-echo ""
-echo "Set Version"
+service home-assistant restart
+printf "\n Set Version"
 version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
 sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
 

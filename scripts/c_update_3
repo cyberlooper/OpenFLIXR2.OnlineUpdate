@@ -2,15 +2,15 @@
 THISUSER=$(whoami)
     if [ $THISUSER != 'root' ]
         then
-            echo 'You must use sudo to run this script, sorry!'
+            printf 'You must use sudo to run this script, sorry!'
            exit 1
     fi
 
 exec 1> >(tee -a /var/log/openflixrupdate/c_update_3.log) 2>&1
 TODAY=$(date)
-echo "-----------------------------------------------------"
-echo "Date:          $TODAY"
-echo "-----------------------------------------------------"
+printf "-----------------------------------------------------"
+printf "Date:          $TODAY"
+printf "-----------------------------------------------------"
 
 ## OpenFLIXR Update version 2.0.1
 # script updates
