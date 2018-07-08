@@ -41,16 +41,38 @@ php upgrade-db.php
 ## Jackett
 echo ""
 echo "Jackett:"
-service jackett stop
-cd /tmp/
-rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
-jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}' | sed -n '2p')
-wget -q https://github.com/Jackett/Jackett/releases/download/$jackettver/Jackett.Binaries.Mono.tar.gz
-tar -xvf Jackett*
-sudo cp -r -u Jackett*/* /opt/jackett/
-rm -rf Jackett*/
-rm Jackett.Binaries.Mono.tar.gz*
-service jackett start
+# Get Jackett state so we can return it to the same
+wasactive=$(systemctl is-active jackett)
+# GitHub's web page format has changed. Just grab the download link and work with that instead of parsing the version title string.
+link=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -i href | grep -i mono.tar.gz | awk -F "[\"]" '{print $2}')
+latestver=$(echo $link | awk -F "[\/]" '{print $6}')
+currentver=$(mono /opt/jackett/JackettConsole.exe -v | awk -F "[ .]" '{print $2 "." $3 "." $4}')
+link='https://github.com'$link
+# Write some stuff to the log so we know what happened if it goes wrong
+echo latestver = $latestver
+echo currentver = $currentver
+if [ $currentver != $latestver ]
+    then
+        echo "Jackett needs updating"
+        echo "download link = $link"
+        service jackett stop
+        cd /tmp/
+        rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
+        wget -q $link || echo 'Download failed!'
+        tar -xvf Jackett*
+        sudo cp -r -u Jackett*/* /opt/jackett/
+        rm -rf Jackett*/
+        rm Jackett.Binaries.Mono.tar.gz*
+        if [ $wasactive == "active" ]
+            then
+                echo "Starting Jackett after update"
+                service jackett start
+            else
+                echo "Jackett was not running before, so not starting it now"
+            fi
+    else
+        echo "Jackett is up to date"
+    fi
 
 ## PlexRequests
 echo ""
