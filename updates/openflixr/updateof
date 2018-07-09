@@ -45,6 +45,7 @@ sudo bash createdirs
 echo ""
 echo "OpenFLIXR Wizard Update:"
 cd /usr/share/nginx/html/setup
+rm /usr/share/nginx/html/setup/.git/index.lock
 git reset --hard
 git pull
 echo ""
@@ -55,7 +56,9 @@ git pull
 echo ""
 echo "CouchPotato:"
 cd /opt/CouchPotato
-git pull
+git fetch --all
+git reset --hard origin/master
+git pull origin master
 /usr/sbin/service couchpotato restart
 echo ""
 echo "Headphones:"
@@ -127,16 +130,12 @@ cd /opt/LazyLibrarian
 git reset --hard
 git pull
 echo ""
-echo "Plexupdate:"
-cd /opt/plexupdate
-git pull
-echo ""
 echo "Cleanup:"
 rm /usr/share/nginx/html/setup/setup.sh 2> /dev/null
 echo ""
 echo "hotfixes:"
 /sbin/ethtool -K eth0 gso off gro off tso off
-service home-assistant restart 
+service home-assistant restart
 echo ""
 echo "Set Version"
 version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
@@ -146,4 +145,4 @@ sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr
 bash /opt/openflixr/userscript.sh
 
 ## Update OpenFLIXR Online
-updateopenflixr
+/usr/local/bin/updateopenflixr

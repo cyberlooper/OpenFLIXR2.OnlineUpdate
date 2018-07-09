@@ -12,6 +12,9 @@ echo "-----------------------------------------------------"
 echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
+# variables
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 ## System
 echo ""
 echo "OS update:"
@@ -37,20 +40,43 @@ rm master
 rm -rf spotweb-spotweb*/
 cd /var/www/spotweb/bin/
 php upgrade-db.php
+chown -R www-data:www-data /var/www/spotweb
 
 ## Jackett
 echo ""
 echo "Jackett:"
-service jackett stop
-cd /tmp/
-rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
-jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}' | sed -n '2p')
-wget -q https://github.com/Jackett/Jackett/releases/download/$jackettver/Jackett.Binaries.Mono.tar.gz
-tar -xvf Jackett*
-sudo cp -r -u Jackett*/* /opt/jackett/
-rm -rf Jackett*/
-rm Jackett.Binaries.Mono.tar.gz*
-service jackett start
+# Get Jackett state so we can return it to the same
+wasactive=$(systemctl is-active jackett)
+# GitHub's web page format has changed. Just grab the download link and work with that instead of parsing the version title string.
+link=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -i href | grep -i mono.tar.gz | awk -F "[\"]" '{print $2}')
+latestver=$(echo $link | awk -F "[\/]" '{print $6}')
+currentver=$(mono /opt/jackett/JackettConsole.exe -v | awk -F "[ .]" '{print $2 "." $3 "." $4}')
+link='https://github.com'$link
+# Write some stuff to the log so we know what happened if it goes wrong
+echo latestver = $latestver
+echo currentver = $currentver
+if [ $currentver != $latestver ]
+    then
+        echo "Jackett needs updating"
+        echo "download link = $link"
+        service jackett stop
+        cd /tmp/
+        rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
+        wget -q $link || echo 'Download failed!'
+        tar -xvf Jackett*
+        sudo cp -r -u Jackett*/* /opt/jackett/
+        rm -rf Jackett*/
+        rm Jackett.Binaries.Mono.tar.gz*
+        if [ $wasactive == "active" ]
+            then
+                echo "Starting Jackett after update"
+                service jackett start
+            else
+                echo "Jackett was not running before, so not starting it now"
+            fi
+    else
+        echo "Jackett is up to date"
+    fi
 
 ## PlexRequests
 echo ""
@@ -58,11 +84,10 @@ echo "Plexrequests.net:"
 service plexrequestsnet stop
 cd /tmp/
 plexrequestsver=$(wget -q https://github.com/tidusjar/Ombi/releases/latest -O - | grep -E \/tag\/ | awk -F "[<>]" '{print $3}' | cut -c 6- | sed -n '2p')
-wget -q https://github.com/tidusjar/Ombi/releases/download/$plexrequestsver/Ombi.zip
-unzip Ombi.zip
-rm Ombi.zip
-sudo cp -r -u Release/* /opt/plexrequest.net/
-rm -rf Release/
+wget -q https://github.com/tidusjar/Ombi/releases/download/$plexrequestsver/linux.tar.gz
+tar xzf linux.tar.gz -C /opt/plexrequest.net/
+rm linux.tar.gz
+chmod +x /opt/plexrequest.net/Ombi
 service plexrequestsnet start
 
 ## Radarr
@@ -84,14 +109,6 @@ cd /tmp
 wget https://nzbget.net/download/nzbget-latest-bin-linux.run
 sh nzbget-latest-bin-linux.run --destdir /opt/nzbget
 
-## Plex Media Server
-echo ""
-echo "Plex Media Server:"
-cd /opt/plexupdate
-bash plexupdate.sh -p
-dpkg -i /tmp/plexmediaserver*.deb 2> /dev/null
-rm /tmp/plexmediaserver*
-
 ## Netdata
 echo ""
 echo "Netdata:"
@@ -112,6 +129,7 @@ bash /opt/openflixr/blocklist.sh
 echo ""
 echo "Pi-hole:"
 pihole -up
+sudo systemctl disable lighttpd.service
 
 ## Update everything else
 echo ""
@@ -122,6 +140,7 @@ echo ""
 echo "Node / PIP / NPM:"
 cd /usr/lib/node_modules
 sudo -H npm install npm@latest
+sudo -H npm i npm@latest -g
 cd /usr/lib/node_modules/rtail
 sudo -H npm update
 cd /usr/lib/node_modules/npm
@@ -142,4 +161,4 @@ echo "Nginx fix"
 mkdir /var/log/nginx
 
 ## Update OpenFLIXR Online
-updateopenflixr
+/usr/local/bin/updateopenflixr

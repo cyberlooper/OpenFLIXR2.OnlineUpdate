@@ -2,7 +2,7 @@
     <link href="../openflixr/assets/css/bootstrap.css" rel="stylesheet">
     <link href="../openflixr/assets/css/main.css" rel="stylesheet">
     <link href="../openflixr/assets/css/ihover.css" rel="stylesheet">
-<body>
+<body style="background-color: transparent">
 <center><h4>Recent releases</h4>
 <div style="position: relative">
 <table style="font-size: 14px; color:#bfbfbf;" border="0" cellspacing="" cellpadding="10px">

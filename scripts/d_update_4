@@ -1,0 +1,84 @@
+#!/bin/bash
+THISUSER=$(whoami)
+    if [ $THISUSER != 'root' ]
+        then
+            echo 'You must use sudo to run this script, sorry!'
+           exit 1
+    fi
+
+exec 1> >(tee -a /var/log/openflixrupdate/d_update_4.log) 2>&1
+TODAY=$(date)
+echo "-----------------------------------------------------"
+echo "Date:          $TODAY"
+echo "-----------------------------------------------------"
+
+## OpenFLIXR Update version 2.2
+# script updates
+cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
+chmod +x /opt/openflixr/updatewkly.sh
+cp /opt/update/updates/openflixr/updateof /opt/openflixr/updateof
+chmod +x /opt/openflixr/updateof
+
+# fixes
+cp -R /opt/update/latest/* /usr/share/nginx/html/latest
+apt-get purge apache2 -y
+systemctl disable lighttpd.service
+sudo -H pip install psycopg2-binary
+
+# homeassistant
+add-apt-repository ppa:deadsnakes/ppa -y
+apt-get update -y
+apt-get install python3.6 python3.6-venv python3.6-dev -y
+python3.6 -m pip install homeassistant --upgrade pip
+
+# plex update
+rm -rf /opt/plexupdate
+echo deb https://downloads.plex.tv/repo/deb public main | sudo tee /etc/apt/sources.list.d/plexmediaserver.list
+curl https://downloads.plex.tv/plex-keys/PlexSign.key | sudo apt-key add -
+
+# fix syncthing
+service monit stop
+service syncthing@openflixr stop
+rm -r /home/openflixr/.config/syncthing/*
+service syncthing@openflixr start
+service syncthing@openflixr stop
+sed -i 's/<theme>default<\/theme>/<theme>dark<\/theme><insecureSkipHostcheck>true<\/insecureSkipHostcheck>/' /home/openflixr/.config/syncthing/config.xml
+sed -i 's/<startBrowser>true<\/startBrowser>/<startBrowser>false<\/startBrowser>/' /home/openflixr/.config/syncthing/config.xml
+sed -i 's/<urAccepted>0<\/urAccepted>/<urAccepted>-1<\/urAccepted>/' /home/openflixr/.config/syncthing/config.xml
+service syncthing@openflixr start
+service monit start
+
+# Fix latest page
+cp /opt/update/latest/inc/imdb_class.php /usr/share/nginx/html/latest/inc/imdb_class.php
+chmod 755 /usr/share/nginx/html/latest/inc/imdb_class.php
+chown www-data:www-data /usr/share/nginx/html/latest/inc/*
+
+#misc
+bash /opt/openflixr/apt-get-queue sshfs vim
+cd /opt/letsencrypt
+rm -fr .git
+git init
+git remote add origin https://github.com/certbot/certbot
+git fetch
+git reset --mixed origin/master
+git branch --set-upstream-to=origin/master master
+rm /opt/openflixr/updateplex.sh
+sed -i 's/php5-fpm.sock/php\/php7.0-fpm.sock/' /etc/nginx/sites-available/reverse
+
+# update system
+bash /opt/update/onlineupdate.sh
+
+## update version
+sed -i 's/2.*/2.2 You Only Live Twice/' /opt/openflixr/version
+crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.2
+version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
+sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
+
+## let system know update has been installed
+touch /opt/update/doneupdate/d_update_4
+
+# update system weekly
+bash /opt/openflixr/updatewkly.sh
+
+# reboot system just to be sure
+reboot now
