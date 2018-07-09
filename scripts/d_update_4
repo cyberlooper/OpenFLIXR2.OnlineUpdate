@@ -65,9 +65,6 @@ git branch --set-upstream-to=origin/master master
 rm /opt/openflixr/updateplex.sh
 sed -i 's/php5-fpm.sock/php\/php7.0-fpm.sock/' /etc/nginx/sites-available/reverse
 
-# update system
-bash /opt/update/onlineupdate.sh
-
 ## update version
 sed -i 's/2.*/2.2 You Only Live Twice/' /opt/openflixr/version
 crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.2
