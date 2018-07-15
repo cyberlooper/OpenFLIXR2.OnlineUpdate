@@ -1,0 +1,107 @@
+#!/bin/bash
+THISUSER=$(whoami)
+    if [ $THISUSER != 'root' ]
+        then
+            echo 'You must use sudo to run this script, sorry!'
+           exit 1
+    fi
+
+exec 1> >(tee -a /var/log/openflixrupdate/e_update_5.log) 2>&1
+TODAY=$(date)
+echo "-----------------------------------------------------"
+echo "Date:          $TODAY"
+echo "-----------------------------------------------------"
+
+## OpenFLIXR Update version 2.3
+# script updates
+cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
+chmod +x /opt/openflixr/updatewkly.sh
+cp /opt/update/updates/openflixr/updateof /opt/openflixr/updateof
+chmod +x /opt/openflixr/updateof
+cp /opt/update/updates/openflixr/createdirs /opt/openflixr/createdirs
+chmod +x /opt/openflixr/createdirs
+
+# ombi
+service monit stop
+systemctl stop plexrequestsnet
+systemctl disable plexrequestsnet
+rm /etc/systemd/system/plexrequestsnet
+rm /etc/monit/conf.d/plexrequests
+systemctl daemon-reload
+systemctl reset-failed
+echo "deb [arch=amd64,armhf] http://repo.ombi.turd.me/stable/ jessie main" | tee "/etc/apt/sources.list.d/ombi.list"
+wget -qO - https://repo.ombi.turd.me/pubkey.txt | apt-key add -
+apt update && apt install ombi -y
+cp /opt/update/updates/configs/ombi.service /etc/systemd/system/ombi.service
+systemctl daemon-reload
+systemctl start ombi
+systemctl enable ombi.service
+cp /opt/update/updates/monit/ombi /etc/monit/conf.d/ombi
+cp /opt/update/updates/monit/ombi /opt/config/monit/ombi
+
+# misc
+sed -i 's/net.ipv4.tcp_tw_recycle = 1//' /etc/sysctl.conf
+sed -i 's/net.ipv4.tcp_tw_reuse = 1/net.ipv4.tcp_tw_reuse = 0/' /etc/sysctl.conf
+sysctl -p
+pip2 install -U cryptography idna pyopenssl
+pip2 install --upgrade pip
+pip uninstall --yes Mopidy-Spotmop
+pip3 uninstall --yes Mopidy-Spotmop
+pip3.5 uninstall --yes Mopidy-Spotmop
+cd /tmp/
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+sudo dpkg -i linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
+sudo dpkg -i linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+sudo dpkg -i linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+sudo dpkg -i linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+bash /opt/openflixr/apt-get-queue python-cairocffi python3-cairocffi php7.0-zip
+systemctl disable apache2
+update-rc.d apache2 disable
+systemctl enable nginx
+chown -R openflixr:openflixr /opt/sickrage/.git
+sed -i 's/Prompt=.*/Prompt=never/' /etc/update-manager/release-upgrades
+sed -i 's/proxy_pass http:\/\/127.0.0.1\/web;/proxy_pass http:\/\/127.0.0.1\/web;proxy_set_header Host $host;proxy_set_header X-Real-IP $remote_addr;proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;/' /etc/nginx/sites-enabled/reverse
+service syncthing@openflixr stop
+sed -i 's/<theme>default<\/theme>/<theme>dark<\/theme><insecureSkipHostcheck>true<\/insecureSkipHostcheck>/' /home/openflixr/.config/syncthing/config.xml
+service lazylibrarian stop
+crudini --set /opt/LazyLibrarian/lazylibrarian.ini General audio_dir "/mnt/audiobooks"
+autorun=$(crudini --get /root/.config/qBittorrent/qBittorrent.conf AutoRun enabled)
+if [ "$autorun" == 'false' ]
+  then
+    crudini --set /root/.config/qBittorrent/qBittorrent.conf AutoRun enabled true
+    crudini --set /root/.config/qBittorrent/qBittorrent.conf AutoRun program "chmod -R 777 %R"
+  fi
+## NLog.dll fix for  Jackett, Sonarr and Radarr if needed
+
+# ubooquity
+service ubooquity stop
+cd /tmp
+wget http://vaemendis.net/ubooquity/downloads/Ubooquity-2.1.1.zip
+unzip /tmp/Ubooquity-2.1.1.zip
+cp /tmp/Ubooquity.jar /opt/ubooquity/
+cp /opt/update/updates/configs/ubooquity.service /etc/systemd/system/ubooquity.service
+cp /opt/update/updates/configs/preferences.json /opt/ubooquity/
+mv /opt/ubooquity/preferences.xml /opt/ubooquity/preferences.xml.bak
+systemctl daemon-reload
+systemctl enable ubooquity.service
+git clone https://github.com/FinalAngel/plextheme /opt/ubooquity/themes/plextheme
+update-rc.d -f ubooquity remove
+rm /etc/init.d/ubooquity
+
+## update version
+sed -i 's/2.*/2.3 A Better Tomorrow/' /opt/openflixr/version
+crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.3
+version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
+sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
+
+## let system know update has been installed
+touch /opt/update/doneupdate/e_update_5
+
+# update system weekly
+bash /opt/openflixr/updatewkly.sh
+
+# reboot system just to be sure
+reboot now

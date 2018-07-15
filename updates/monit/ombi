@@ -1,0 +1,4 @@
+check process Ombi matching "Ombi"
+    start program = "/usr/sbin/service ombi start"
+    stop program = "/usr/sbin/service ombi stop"
+    if failed host 127.0.0.1 port 3579 then restart

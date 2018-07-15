@@ -1,0 +1,47 @@
+{
+  "filesPaths" : [ {
+    "pathString" : "/mnt/rawbooks/",
+    "userName" : [ ]
+  } ],
+  "comicsPaths" : [ {
+    "pathString" : "/mnt/comics",
+    "userName" : [ ]
+  } ],
+  "booksPaths" : [ {
+    "pathString" : "/mnt/books",
+    "userName" : [ ]
+  } ],
+  "users" : [ ],
+  "isFilesProviderEnabled" : true,
+  "isComicsProviderEnabled" : true,
+  "isBooksProviderEnabled" : true,
+  "isUserManagementEnabled" : false,
+  "libraryPortNumber" : 2022,
+  "adminPortNumber" : 2023,
+  "comicWidth" : 160,
+  "comicHeight" : 230,
+  "comicsPaginationNumber" : 30,
+  "bookWidth" : 160,
+  "bookHeight" : 230,
+  "booksPaginationNumber" : 30,
+  "minimizeToTray" : false,
+  "minimizeOnStartup" : false,
+  "autoscanPeriod" : 720,
+  "isRemoteAdminEnabled" : false,
+  "theme" : "plextheme",
+  "isShrinkingCacheEnabled" : false,
+  "shrunkPageWidth" : 1536,
+  "shrunkPageHeight" : 2500,
+  "shrinkingCachePath" : "",
+  "autoScanAtLaunch" : true,
+  "reverseProxyPrefix" : "comics",
+  "keystorePath" : "",
+  "keystorePassword" : "",
+  "isOpdsProviderEnabled" : true,
+  "folderExclusionPattern" : "",
+  "bypassSingleRootFolder" : true,
+  "enableFolderMetadataDisplay" : true,
+  "bookmarkUsingCookies" : false,
+  "displayTitleInsteadOfFileName" : true,
+  "keepUnreachableSharedFolders" : true
+}

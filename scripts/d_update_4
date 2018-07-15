@@ -65,17 +65,5 @@ git branch --set-upstream-to=origin/master master
 rm /opt/openflixr/updateplex.sh
 sed -i 's/php5-fpm.sock/php\/php7.0-fpm.sock/' /etc/nginx/sites-available/reverse
 
-## update version
-sed -i 's/2.*/2.2 You Only Live Twice/' /opt/openflixr/version
-crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.2
-version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
-sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
-
 ## let system know update has been installed
 touch /opt/update/doneupdate/d_update_4
-
-# update system weekly
-bash /opt/openflixr/updatewkly.sh
-
-# reboot system just to be sure
-reboot now

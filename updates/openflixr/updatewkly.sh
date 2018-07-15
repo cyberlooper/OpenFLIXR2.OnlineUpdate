@@ -78,18 +78,6 @@ if [ $currentver != $latestver ]
         echo "Jackett is up to date"
     fi
 
-## PlexRequests
-echo ""
-echo "Plexrequests.net:"
-service plexrequestsnet stop
-cd /tmp/
-plexrequestsver=$(wget -q https://github.com/tidusjar/Ombi/releases/latest -O - | grep -E \/tag\/ | awk -F "[<>]" '{print $3}' | cut -c 6- | sed -n '2p')
-wget -q https://github.com/tidusjar/Ombi/releases/download/$plexrequestsver/linux.tar.gz
-tar xzf linux.tar.gz -C /opt/plexrequest.net/
-rm linux.tar.gz
-chmod +x /opt/plexrequest.net/Ombi
-service plexrequestsnet start
-
 ## Radarr
 echo ""
 echo "Radarr:"
@@ -131,6 +119,9 @@ echo "Pi-hole:"
 pihole -up
 sudo systemctl disable lighttpd.service
 
+# Latest page imdb grabber
+wget https://raw.githubusercontent.com/FabianBeiner/PHP-IMDB-Grabber/master/imdb.class.php -O /usr/share/nginx/html/latest/inc/imdb_class.php
+
 ## Update everything else
 echo ""
 echo "updateof:"
@@ -139,6 +130,7 @@ bash updateof
 echo ""
 echo "Node / PIP / NPM:"
 cd /usr/lib/node_modules
+sudo npm install npm@latest -g
 sudo -H npm install npm@latest
 sudo -H npm i npm@latest -g
 cd /usr/lib/node_modules/rtail

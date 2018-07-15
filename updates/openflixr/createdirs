@@ -1,0 +1,44 @@
+#!/bin/bash
+exec 1> >(tee -a /var/log/createdirs.log) 2>&1
+TODAY=$(date)
+echo "-----------------------------------------------------"
+echo "Date:          $TODAY"
+echo "-----------------------------------------------------"
+
+THISUSER=$(whoami)
+    if [ $THISUSER != 'root' ]
+        then
+            echo 'You must use sudo to run this script, sorry!'
+            exit  1
+    fi
+
+mkdir /mnt/audiobooks
+mkdir /mnt/comics
+mkdir /mnt/movies
+mkdir /mnt/series
+mkdir /mnt/music
+mkdir /mnt/books
+mkdir /mnt/syncthing
+
+if mount | grep /mnt/downloads > /dev/null; then
+mkdir /mnt/downloads/nzbget
+mkdir /mnt/downloads/blackholenzb
+mkdir /mnt/downloads/books
+mkdir /mnt/downloads/blackholenzbget
+mkdir /mnt/downloads/complete
+mkdir /mnt/downloads/incomplete
+mkdir /mnt/downloads/music
+mkdir /mnt/downloads/musicready
+mkdir /mnt/downloads/temp
+mkdir /mnt/downloads/tempbooks
+mkdir /mnt/downloads/lazyimport
+mkdir /mnt/downloads/tempcomics
+mkdir /mnt/downloads/tempseries
+mkdir /mnt/downloads/torrentcomplete
+mkdir /mnt/downloads/torrentwatch
+cd /mnt/downloads
+chmod -R 777 *
+chown -R openflixr:openflixr *
+else
+    echo "downloads dir not mounted"
+fi

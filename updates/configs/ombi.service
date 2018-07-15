@@ -5,8 +5,8 @@ After=network-online.target
 [Service]
 User=root
 Group=root
-WorkingDirectory=/opt/plexrequest.net/
-ExecStart=/opt/plexrequest.net/Ombi
+WorkingDirectory=/opt/Ombi/
+ExecStart=/opt/Ombi/Ombi --host http://*:3579
 Type=simple
 TimeoutStopSec=30
 Restart=on-failure
