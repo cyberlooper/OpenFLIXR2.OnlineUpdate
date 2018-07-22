@@ -1,0 +1,4 @@
+check process Lidarr with pidfile /home/openflixr/.config/Lidarr/lidarr.pid
+	start program = "/usr/sbin/service lidarr start"
+	stop program = "/usr/sbin/service lidarr stop"
+	if failed host 127.0.0.1 port 8686 with timeout 30 seconds then restart

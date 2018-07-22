@@ -1,0 +1,14 @@
+[Unit]
+Description=Lidarr Daemon
+After=network.target
+
+[Service]
+User=openflixr
+Group=openflixr
+Type=simple
+ExecStart=/usr/bin/mono /opt/Lidarr/Lidarr.exe -nobrowser
+TimeoutStopSec=20
+KillMode=process
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target

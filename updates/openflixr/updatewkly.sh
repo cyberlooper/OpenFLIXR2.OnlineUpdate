@@ -1,10 +1,10 @@
 #!/bin/bash
 THISUSER=$(whoami)
-    if [ $THISUSER != 'root' ]
-        then
-            echo 'You must use sudo to run this script, sorry!'
-            exit 1
-    fi
+if [ $THISUSER != 'root' ]
+then
+  echo 'You must use sudo to run this script, sorry!'
+  exit 1
+fi
 
 exec 1> >(tee -a /var/log/updatewkly.log) 2>&1
 TODAY=$(date)
@@ -56,27 +56,64 @@ link='https://github.com'$link
 echo latestver = $latestver
 echo currentver = $currentver
 if [ $currentver != $latestver ]
-    then
-        echo "Jackett needs updating"
-        echo "download link = $link"
-        service jackett stop
-        cd /tmp/
-        rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
-        wget -q $link || echo 'Download failed!'
-        tar -xvf Jackett*
-        sudo cp -r -u Jackett*/* /opt/jackett/
-        rm -rf Jackett*/
-        rm Jackett.Binaries.Mono.tar.gz*
-        if [ $wasactive == "active" ]
-            then
-                echo "Starting Jackett after update"
-                service jackett start
-            else
-                echo "Jackett was not running before, so not starting it now"
-            fi
-    else
-        echo "Jackett is up to date"
-    fi
+then
+  echo "Jackett needs updating"
+  echo "download link = $link"
+  service jackett stop
+  cd /tmp/
+  rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
+  wget -q $link || echo 'Download failed!'
+  tar -xvf Jackett*
+  sudo cp -r -u Jackett*/* /opt/jackett/
+  rm -rf Jackett*/
+  rm Jackett.Binaries.Mono.tar.gz*
+  if [ $wasactive == "active" ]
+  then
+    echo "Starting Jackett after update"
+    service jackett start
+  else
+    echo "Jackett was not running before, so not starting it now"
+  fi
+else
+  echo "Jackett is up to date"
+fi
+
+## Lidarr
+echo ""
+echo "Lidarr:"
+# Get Lidarr state so we can return it to the same
+wasactive=$(systemctl is-active lidarr)
+# GitHub's web page format has changed. Just grab the download link and work with that instead of parsing the version title string.
+link=$(wget -q https://github.com/lidarr/Lidarr/releases/latest -O - | grep -i href | grep -i linux.tar.gz | awk -F "[\"]" '{print $2}')
+latestver=$(echo $link | awk -F "[\/]" '{print $6}')
+currentver=$(mono /opt/Lidarr/Lidarr.exe -v | awk -F "[ .]" '{print $2 "." $3 "." $4}')
+latestverurl=$(echo $link | awk -F "[\/]" '{print $1"/"$2"/"$3"/"$4"/"$5"/"$6"/"$7}')
+link='https://github.com'$latestverurl
+# Write some stuff to the log so we know what happened if it goes wrong
+echo latestver = $latestver
+echo currentver = $currentver
+if [ $currentver != $latestver ]
+then
+  echo "Lidarr needs updating"
+  echo "download link = $link"
+  service lidarr stop
+  cd /tmp/
+  rm Lidarr.develop.* 2> /dev/null
+  wget -q $link || echo 'Download failed!'
+  tar -xvf Lidarr*
+  sudo cp -r -u Lidarr*/* /opt/Lidarr/
+  rm -rf Lidarr*/
+  rm Lidarr.develop.*
+  if [ $wasactive == "active" ]
+  then
+    echo "Starting Lidarr after update"
+    service lidarr start
+  else
+    echo "Lidarr was not running before, so not starting it now"
+  fi
+else
+  echo "Lidarr is up to date"
+fi
 
 ## Radarr
 echo ""
@@ -107,8 +144,7 @@ git reset --hard
 sudo git pull
 sudo bash netdata-installer.sh --dont-wait --install /opt
 
-##
-# Update blocklist
+## Update blocklist
 echo ""
 echo "IP Blocklist:"
 bash /opt/openflixr/blocklist.sh
@@ -119,8 +155,14 @@ echo "Pi-hole:"
 pihole -up
 sudo systemctl disable lighttpd.service
 
-# Latest page imdb grabber
+## Latest page imdb grabber
 wget https://raw.githubusercontent.com/FabianBeiner/PHP-IMDB-Grabber/master/imdb.class.php -O /usr/share/nginx/html/latest/inc/imdb_class.php
+
+## Grav
+chown www-data:www-data -R /usr/share/nginx/html/user
+cd /usr/share/nginx/html
+bin/gpm selfupgrade -f
+bin/gpm update -f
 
 ## Update everything else
 echo ""

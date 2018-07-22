@@ -1,0 +1,83 @@
+#!/bin/bash
+THISUSER=$(whoami)
+    if [ $THISUSER != 'root' ]
+        then
+            echo 'You must use sudo to run this script, sorry!'
+           exit 1
+    fi
+
+exec 1> >(tee -a /var/log/openflixrupdate/f_update_6.log) 2>&1
+TODAY=$(date)
+echo "-----------------------------------------------------"
+echo "Date:          $TODAY"
+echo "-----------------------------------------------------"
+
+## OpenFLIXR Update version 2.4
+# script updates
+cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
+chmod +x /opt/openflixr/updatewkly.sh
+
+# misc
+apt-get purge php7.1* -y
+apt-get purge php7.0* -y
+bash /opt/openflixr/apt-get-queue php7.2-dev php7.2-fpm
+sed -i 's/php7.0-fpm.sock/php7.2-fpm.sock/g' /etc/nginx/sites-enabled/reverse
+cp /opt/update/updates/configs/nginx.conf /etc/nginx/nginx.conf
+rm -rf /opt/autosub
+git clone https://github.com/BenjV/autosub /opt/autosub
+cp /opt/update/updates/configs/config.properties /opt/autosub
+
+# htpc manager openflixr theme
+mkdir /opt/HTPCManager/interfaces/default/css/themes/openflixr
+cp /opt/update/updates/htpcmanager/openflixr/* /opt/HTPCManager/interfaces/default/css/themes/openflixr
+
+# grav fixes
+chown www-data:www-data -R /usr/share/nginx/html/user
+cd /usr/share/nginx/html
+bin/gpm selfupgrade -f
+bin/gpm update -f
+sed -i 's/index index.html index.php;/index index.php;/' /etc/nginx/sites-enabled/reverse
+
+# Lidarr
+cp /opt/update/updates/configs/lidarr.service /etc/systemd/system/
+systemctl enable lidarr.service
+mkdir /opt/Lidarr
+link=$(wget -q https://github.com/lidarr/Lidarr/releases/latest -O - | grep -i href | grep -i linux.tar.gz | awk -F "[\"]" '{print $2}')
+latestver=$(echo $link | awk -F "[\/]" '{print $6}')
+latestverurl=$(echo $link | awk -F "[\/]" '{print $1"/"$2"/"$3"/"$4"/"$5"/"$6"/"$7}')
+link='https://github.com'$latestverurl
+cd /tmp/
+wget -q $link || echo 'Download failed!'
+tar -xvf Lidarr*
+cp -r -u Lidarr*/* /opt/Lidarr/
+rm -rf Lidarr*/
+rm Lidarr.develop.*
+chown openflixr:openflixr -R /opt/Lidarr
+cp /opt/update/updates/configs/config.xml /home/openflixr/.config/Lidarr/config.xml
+
+sed -i '/# add_config_2/a \
+location /lidarr {\
+    proxy_pass http:\/\/127.0.0.1:8686;\
+    proxy_set_header Host $host;\
+    proxy_set_header X-Real-IP $remote_addr;\
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\
+        }\
+' /etc/nginx/sites-enabled/reverse
+
+cp /opt/update/updates/monit/lidarr /etc/monit/conf.d/lidarr
+cp /opt/update/updates/monit/lidarr /opt/config/monit/lidarr
+
+## update version
+sed -i 's/2.*/2.4 A Better Tomorrow II/' /opt/openflixr/version
+crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.4
+version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
+sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
+
+## let system know update has been installed
+touch /opt/update/doneupdate/f_update_6
+
+# update system weekly
+bash /opt/openflixr/updatewkly.sh
+
+# reboot system just to be sure
+reboot now
