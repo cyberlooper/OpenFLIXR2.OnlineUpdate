@@ -186,6 +186,3 @@ bash cleanup.sh
 echo ""
 echo "Nginx fix"
 mkdir /var/log/nginx
-
-## Update OpenFLIXR Online
-/usr/local/bin/updateopenflixr
