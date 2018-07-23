@@ -12,14 +12,14 @@ echo "-----------------------------------------------------"
 echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
-## OpenFLIXR Update version 2.4.1
+## OpenFLIXR Update version 2.4.3
 # script updates
 cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
 chmod +x /opt/openflixr/updatewkly.sh
 
 ## update version
-sed -i 's/2.*/2.4.1 A Better Tomorrow II/' /opt/openflixr/version
-crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.4.1
+sed -i 's/2.*/2.4.3 A Better Tomorrow II/' /opt/openflixr/version
+crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.4.3
 version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
 sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
 
