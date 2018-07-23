@@ -86,14 +86,10 @@ wasactive=$(systemctl is-active lidarr)
 # GitHub's web page format has changed. Just grab the download link and work with that instead of parsing the version title string.
 link=$(wget -q https://github.com/lidarr/Lidarr/releases/latest -O - | grep -i href | grep -i linux.tar.gz | awk -F "[\"]" '{print $2}')
 latestver=$(echo $link | awk -F "[\/]" '{print $6}')
-currentver=$(mono /opt/Lidarr/Lidarr.exe -v | awk -F "[ .]" '{print $2 "." $3 "." $4}')
 latestverurl=$(echo $link | awk -F "[\/]" '{print $1"/"$2"/"$3"/"$4"/"$5"/"$6"/"$7}')
 link='https://github.com'$latestverurl
 # Write some stuff to the log so we know what happened if it goes wrong
 echo latestver = $latestver
-echo currentver = $currentver
-if [ $currentver != $latestver ]
-then
   echo "Lidarr needs updating"
   echo "download link = $link"
   service lidarr stop
@@ -111,9 +107,6 @@ then
   else
     echo "Lidarr was not running before, so not starting it now"
   fi
-else
-  echo "Lidarr is up to date"
-fi
 
 ## Radarr
 echo ""
