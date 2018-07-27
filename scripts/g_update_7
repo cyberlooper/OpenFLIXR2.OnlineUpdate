@@ -29,5 +29,16 @@ touch /opt/update/doneupdate/g_update_7
 # update system weekly
 bash /opt/openflixr/updatewkly.sh
 
+# update kernel
+cd /tmp/
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+sudo dpkg -i linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
+sudo dpkg -i linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+sudo dpkg -i linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+sudo dpkg -i linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
+
 # reboot system just to be sure
 reboot now
