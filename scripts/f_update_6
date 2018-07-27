@@ -55,6 +55,7 @@ cp -r -u Lidarr*/* /opt/Lidarr/
 rm -rf Lidarr*/
 rm Lidarr.develop.*
 chown openflixr:openflixr -R /opt/Lidarr
+mkdir /home/openflixr/.config/Lidarr
 cp /opt/update/updates/configs/config.xml /home/openflixr/.config/Lidarr/config.xml
 
 sed -i '/# add_config_2/a \
