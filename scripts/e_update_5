@@ -48,16 +48,7 @@ pip2 install --upgrade pip
 pip uninstall --yes Mopidy-Spotmop
 pip3 uninstall --yes Mopidy-Spotmop
 pip3.5 uninstall --yes Mopidy-Spotmop
-cd /tmp/
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-sudo dpkg -i linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
-sudo dpkg -i linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-sudo dpkg -i linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-sudo dpkg -i linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-bash /opt/openflixr/apt-get-queue python-cairocffi python3-cairocffi php7.0-zip
+bash /opt/openflixr/apt-get-queue python-cairocffi python3-cairocffi php7.2-zip php7.2-common libzip5 python-cffi python-pycparser python3-ply python3-cffi-backend python3-cffi python3-pycparser python-ply
 systemctl disable apache2
 update-rc.d apache2 disable
 systemctl enable nginx
