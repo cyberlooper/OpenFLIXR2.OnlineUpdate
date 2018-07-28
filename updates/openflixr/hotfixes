@@ -1,0 +1,5 @@
+# monit stop
+service monit stop
+
+# monit start
+service monit start

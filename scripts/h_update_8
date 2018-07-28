@@ -106,17 +106,5 @@ sudo dpkg -i linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd6
 sudo dpkg -i linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
 sudo dpkg -i linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
 
-## update version
-sed -i 's/2.*/2.5 A Better Tomorrow III/' /opt/openflixr/version
-crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.5
-version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
-sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
-
 ## let system know update has been installed
 touch /opt/update/doneupdate/h_update_8
-
-# update system weekly
-bash /opt/openflixr/updatewkly.sh
-
-# reboot system just to be sure
-reboot now
