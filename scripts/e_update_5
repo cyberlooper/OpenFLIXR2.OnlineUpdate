@@ -39,6 +39,13 @@ pip2 install --upgrade pip
 pip uninstall --yes Mopidy-Spotmop
 pip3 uninstall --yes Mopidy-Spotmop
 pip3.5 uninstall --yes Mopidy-Spotmop
+<<<<<<< HEAD
+=======
+bash /opt/openflixr/apt-get-queue python-cairocffi python3-cairocffi php7.2-zip php7.2-common libzip5 python-cffi python-pycparser python3-ply python3-cffi-backend python3-cffi python3-pycparser python-ply
+systemctl disable apache2
+update-rc.d apache2 disable
+systemctl enable nginx
+>>>>>>> 53239fef18c48db7b3a6bf84086541d5c6100e2e
 chown -R openflixr:openflixr /opt/sickrage/.git
 sed -i 's/Prompt=.*/Prompt=never/' /etc/update-manager/release-upgrades
 sed -i 's/proxy_pass http:\/\/127.0.0.1\/web;/proxy_pass http:\/\/127.0.0.1\/web;proxy_set_header Host $host;proxy_set_header X-Real-IP $remote_addr;proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;/' /etc/nginx/sites-enabled/reverse

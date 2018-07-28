@@ -24,6 +24,18 @@ cp /opt/update/updates/configs/config.properties /opt/autosub
 mkdir /opt/HTPCManager/interfaces/default/css/themes/openflixr
 cp /opt/update/updates/htpcmanager/openflixr/* /opt/HTPCManager/interfaces/default/css/themes/openflixr
 
+<<<<<<< HEAD
+=======
+# grav fixes
+chown www-data:www-data -R /usr/share/nginx/html/user
+chown www-data:www-data -R /usr/share/nginx/html/cache
+chmod +777 -R /usr/share/nginx/html/cache
+cd /usr/share/nginx/html
+bin/gpm selfupgrade -f -y
+bin/gpm update -f -y
+sed -i 's/index index.html index.php;/index index.php;/' /etc/nginx/sites-enabled/reverse
+
+>>>>>>> 53239fef18c48db7b3a6bf84086541d5c6100e2e
 # Lidarr
 cp /opt/update/updates/configs/lidarr.service /etc/systemd/system/
 systemctl enable lidarr.service
@@ -39,6 +51,11 @@ cp -r -u Lidarr*/* /opt/Lidarr/
 rm -rf Lidarr*/
 rm Lidarr.develop.*
 chown openflixr:openflixr -R /opt/Lidarr
+<<<<<<< HEAD
+=======
+mkdir /home/openflixr/.config/Lidarr
+cp /opt/update/updates/configs/config.xml /home/openflixr/.config/Lidarr/config.xml
+>>>>>>> 53239fef18c48db7b3a6bf84086541d5c6100e2e
 
 sed -i '/# add_config_2/a \
 location /lidarr {\
