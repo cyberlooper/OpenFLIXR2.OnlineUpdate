@@ -68,7 +68,7 @@ echo latestver = $latestver
   cd /tmp/
   rm nzbhydra2* 2> /dev/null
   wget -q $link || echo 'Download failed!'
-  unzip nzbhydra2*.zip -d /opt/nzbhydra2/
+  unzip -o nzbhydra2*.zip -d /opt/nzbhydra2/
   rm nzbhydra2* 2> /dev/null
   chown openflixr: -R /opt/nzbhydra2
   if [ $wasactive == "active" ]
