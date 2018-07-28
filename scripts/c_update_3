@@ -13,6 +13,9 @@ echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
 ## OpenFLIXR Update version 2.0.1
+# script updates
+cp /opt/update/updates/openflixr/updateof /opt/openflixr/updateof
+chmod +x /opt/openflixr/updateof
 
 # fixes
 pihole -b analytics.plex.tv

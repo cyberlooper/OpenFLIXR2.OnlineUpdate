@@ -19,12 +19,12 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 echo ""
 echo "OS update:"
 apt-get clean -y
-apt-get autoclean -y
+sudo apt-get autoclean -y
 apt-get autoremove --purge -y
 apt-get update -y
 apt-get install -f -y --assume-no
 apt-get update -y --assume-no
-DEBIAN_FRONTEND=noninteractive apt-get -y --with-new-pkgs upgrade
+apt-get upgrade -y --assume-no
 cp /etc/apt/apt.conf.d/50unattended-upgrades.ucftmp /etc/apt/apt.conf.d/50unattended-upgrades
 rm /etc/apt/apt.conf.d/50unattended-upgrades.ucftmp
 dpkg --configure -a
@@ -35,7 +35,7 @@ echo "Spotweb:"
 cd /tmp/
 wget https://github.com/spotweb/spotweb/tarball/master
 tar -xvzf master
-cp -r -u spotweb-spotweb*/* /var/www/spotweb/
+sudo cp -r -u spotweb-spotweb*/* /var/www/spotweb/
 rm master
 rm -rf spotweb-spotweb*/
 cd /var/www/spotweb/bin/
@@ -64,7 +64,7 @@ then
   rm Jackett.Binaries.Mono.tar.gz* 2> /dev/null
   wget -q $link || echo 'Download failed!'
   tar -xvf Jackett*
-  cp -r -u Jackett*/* /opt/jackett/
+  sudo cp -r -u Jackett*/* /opt/jackett/
   rm -rf Jackett*/
   rm Jackett.Binaries.Mono.tar.gz*
   if [ $wasactive == "active" ]
@@ -97,7 +97,7 @@ echo latestver = $latestver
   rm Lidarr.develop.* 2> /dev/null
   wget -q $link || echo 'Download failed!'
   tar -xvf Lidarr*
-  cp -r -u Lidarr*/* /opt/Lidarr/
+  sudo cp -r -u Lidarr*/* /opt/Lidarr/
   rm -rf Lidarr*/
   rm Lidarr.develop.*
   if [ $wasactive == "active" ]
@@ -116,7 +116,7 @@ cd /tmp/
 wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 )
 tar -xvzf Radarr.develop.*.linux.tar.gz
 rm Radarr.develop.*.linux.tar.gz
-cp -r -u Radarr/* /opt/Radarr/
+sudo cp -r -u Radarr/* /opt/Radarr/
 rm -rf Radarr/
 service radarr start
 
@@ -134,8 +134,8 @@ service netdata stop
 killall netdata
 cd /opt/netdata.git/
 git reset --hard
-git pull
-bash netdata-installer.sh --dont-wait --install /opt
+sudo git pull
+sudo bash netdata-installer.sh --dont-wait --install /opt
 
 ## Update blocklist
 echo ""
@@ -146,20 +146,16 @@ bash /opt/openflixr/blocklist.sh
 echo ""
 echo "Pi-hole:"
 pihole -up
-systemctl disable lighttpd.service
+sudo systemctl disable lighttpd.service
 
 ## Latest page imdb grabber
 wget https://raw.githubusercontent.com/FabianBeiner/PHP-IMDB-Grabber/master/imdb.class.php -O /usr/share/nginx/html/latest/inc/imdb_class.php
-chmod 755 /usr/share/nginx/html/latest/inc/imdb_class.php
-chown www-data:www-data /usr/share/nginx/html/latest/inc/*
 
 ## Grav
 chown www-data:www-data -R /usr/share/nginx/html/user
-chown www-data:www-data -R /usr/share/nginx/html/cache
-chmod +777 -R /usr/share/nginx/html/cache
 cd /usr/share/nginx/html
-bin/gpm selfupgrade -f -y
-bin/gpm update -f -y
+bin/gpm selfupgrade -f
+bin/gpm update -f
 
 ## Update everything else
 echo ""

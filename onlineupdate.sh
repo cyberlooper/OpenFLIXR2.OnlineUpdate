@@ -13,9 +13,17 @@ echo "-----------------------------------------------------"
 echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
-## OpenFLIXR Online Update version 1.0.5
+## OpenFLIXR Online Update version 1.0.4
 echo ""
 echo "OpenFLIXR Wizard Update:"
+cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
+chmod +x /opt/openflixr/updatewkly.sh
+cp /opt/update/updates/openflixr/updateof /opt/openflixr/updateof
+chmod +x /opt/openflixr/updateof
+cp /opt/update/updates/openflixr/createdirs /opt/openflixr/createdirs
+chmod +x /opt/openflixr/createdirs
+cp /opt/update/updates/openflixr/logio.sh /opt/openflixr/logio.sh
+chmod +x /opt/openflixr/logio.sh
 cd /usr/share/nginx/html/setup
 git reset --hard
 git pull
