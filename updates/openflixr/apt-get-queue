@@ -1,0 +1,6 @@
+#!/bin/bash
+while :; do
+  apt-get install -y $@ && break
+  echo “Retrying...”
+  sleep 1
+done

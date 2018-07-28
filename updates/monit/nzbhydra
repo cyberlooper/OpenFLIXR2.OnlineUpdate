@@ -1,0 +1,4 @@
+check process NZBHydra matching "nzbhydra2wrapper"
+    start program = "/usr/sbin/service nzbhydra2 start"
+    stop program = "/usr/sbin/service nzbhydra2 stop"
+    if failed host 127.0.0.1 port 5075 then restart

@@ -1,0 +1,15 @@
+[Unit]
+Description=NZBHydra2 Daemon
+Documentation=https://github.com/theotherp/nzbhydra2
+After=network.target
+
+[Service]
+User=openflixr
+Group=openflixr
+Type=simple
+WorkingDirectory=/opt/nzbhydra2
+ExecStart=/usr/bin/python /opt/nzbhydra2/nzbhydra2wrapper.py --nobrowser
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

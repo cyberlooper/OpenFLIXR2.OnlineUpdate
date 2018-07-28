@@ -13,15 +13,8 @@ echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
 ## OpenFLIXR Update version 2.4
-# script updates
-cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
-chmod +x /opt/openflixr/updatewkly.sh
 
 # misc
-apt-get purge php7.1* -y
-apt-get purge php7.0* -y
-bash /opt/openflixr/apt-get-queue php7.2-dev php7.2-fpm
-sed -i 's/php7.0-fpm.sock/php7.2-fpm.sock/g' /etc/nginx/sites-enabled/reverse
 cp /opt/update/updates/configs/nginx.conf /etc/nginx/nginx.conf
 rm -rf /opt/autosub
 git clone https://github.com/BenjV/autosub /opt/autosub
@@ -30,13 +23,6 @@ cp /opt/update/updates/configs/config.properties /opt/autosub
 # htpc manager openflixr theme
 mkdir /opt/HTPCManager/interfaces/default/css/themes/openflixr
 cp /opt/update/updates/htpcmanager/openflixr/* /opt/HTPCManager/interfaces/default/css/themes/openflixr
-
-# grav fixes
-chown www-data:www-data -R /usr/share/nginx/html/user
-cd /usr/share/nginx/html
-bin/gpm selfupgrade -f
-bin/gpm update -f
-sed -i 's/index index.html index.php;/index index.php;/' /etc/nginx/sites-enabled/reverse
 
 # Lidarr
 cp /opt/update/updates/configs/lidarr.service /etc/systemd/system/
@@ -53,7 +39,6 @@ cp -r -u Lidarr*/* /opt/Lidarr/
 rm -rf Lidarr*/
 rm Lidarr.develop.*
 chown openflixr:openflixr -R /opt/Lidarr
-cp /opt/update/updates/configs/config.xml /home/openflixr/.config/Lidarr/config.xml
 
 sed -i '/# add_config_2/a \
 location /lidarr {\
