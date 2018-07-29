@@ -1,0 +1,4 @@
+check process Mopidy matching "mopidy"
+start program = "/usr/sbin/service mopidy start"
+stop program = "/usr/sbin/service mopidy stop"
+restart program = "/usr/sbin/service mopidy restart"

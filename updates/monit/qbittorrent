@@ -1,0 +1,4 @@
+check process QBittorrent matching "qbittorrent-nox"
+    start program = "/usr/sbin/service qbittorrent start"
+    stop program = "/usr/sbin/service qbittorrent stop"
+    if failed host 127.0.0.1 port 9999 then restart

@@ -1,0 +1,4 @@
+check process SABnzbd matching "python"
+    start program = "/usr/sbin/service sabnzbdplus start"
+    stop program = "/usr/sbin/service sabnzbdplus stop"
+    if failed host 127.0.0.1 port 8080 then restart

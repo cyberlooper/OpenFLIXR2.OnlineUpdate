@@ -1,0 +1,4 @@
+check process Headphones with pidfile /run/headphones/headphones.pid
+    start program = "/usr/sbin/service headphones start"
+    stop program = "/usr/sbin/service headphones stop"
+    if failed host 127.0.0.1 port 8181 then restart

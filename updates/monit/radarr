@@ -1,0 +1,4 @@
+check process Radarr with pidfile /root/.config/Radarr/nzbdrone.pid
+	start program = "/usr/sbin/service radarr start"
+	stop program = "/usr/sbin/service radarr stop"
+	if failed host 127.0.0.1 port 7878 with timeout 30 seconds then restart

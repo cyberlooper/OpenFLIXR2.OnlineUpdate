@@ -1,0 +1,4 @@
+check process Jackett matching "mono"
+    start program = "/usr/sbin/service jackett start"
+    stop program = "/usr/sbin/service jackett stop"
+    if failed host 127.0.0.1 port 9117 then restart

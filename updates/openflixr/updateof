@@ -35,6 +35,7 @@ chmod +x /opt/openflixr/createdirs
 cp /opt/update/updates/openflixr/logio.sh /opt/openflixr/logio.sh
 chmod +x /opt/openflixr/logio.sh
 cp /opt/update/updates/openflixr/hotfixes /opt/openflixr/hotfixes
+cp /opt/update/updates/monit/* /etc/monit/conf.d/
 
 ## Pip Apps
 echo ""
@@ -120,6 +121,7 @@ git pull
 echo ""
 echo "AutoSub:"
 cd /opt/autosub
+git reset --hard
 git pull
 /usr/sbin/service autosub restart
 echo ""
@@ -195,6 +197,3 @@ bash /opt/openflixr/hotfixes
 
 ## User script
 bash /opt/openflixr/userscript.sh
-
-## Update OpenFLIXR Online
-/usr/local/bin/updateopenflixr

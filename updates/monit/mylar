@@ -1,0 +1,4 @@
+check process Mylar with pidfile /run/mylar/mylar.pid
+    start program = "/usr/sbin/service mylar start"
+    stop program = "/usr/sbin/service mylar stop"
+    if failed host 127.0.0.1 port 8090 then restart

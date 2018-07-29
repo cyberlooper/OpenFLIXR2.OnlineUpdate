@@ -1,0 +1,4 @@
+check process PiHole with pidfile /run/pihole-FTL.pid
+        start program = "/usr/sbin/service pihole-FTL start"
+        stop program = "/usr/sbin/service pihole-FTL stop"
+        if failed host 127.0.0.1 port 4711 with timeout 30 seconds then restart

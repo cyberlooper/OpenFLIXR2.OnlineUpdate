@@ -1,0 +1,10 @@
+check process DNS with pidfile /var/run/dnsmasq/dnsmasq.pid
+  start program = "/etc/init.d/dnsmasq start" with timeout 60 seconds
+  stop program = "/etc/init.d/dnsmasq stop"
+  if failed
+    host 127.0.0.1
+    port 53 use type udp
+    protocol dns
+    with timeout 60 seconds
+  then restart
+  if 3 restarts within 5 cycles then timeout

@@ -135,7 +135,7 @@ killall netdata
 cd /opt/netdata.git/
 git reset --hard
 git pull
-bash netdata-installer.sh --dont-wait --install /opt
+bash netdata-updater.sh
 
 ## Update blocklist
 echo ""

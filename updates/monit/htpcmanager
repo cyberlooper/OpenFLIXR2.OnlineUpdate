@@ -1,0 +1,4 @@
+check process HTPCManager with pidfile /run/htpcmanager.pid
+ start program = "/usr/sbin/service htpcmanager start"
+ stop program = "/usr/sbin/service htpcmanager stop"
+ if failed host 127.0.0.1 port 8085 then restart

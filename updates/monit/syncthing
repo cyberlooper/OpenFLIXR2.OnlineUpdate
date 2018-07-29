@@ -1,0 +1,4 @@
+check process Syncthing matching "syncthing"
+        start program = "/usr/sbin/service syncthing@openflixr start"
+        stop program = "/usr/sbin/service syncthing@openflixr stop"
+        if failed host 127.0.0.1 port 8384 with timeout 30 seconds then restart

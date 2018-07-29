@@ -1,0 +1,4 @@
+check process HomeAssistant matching "hass"
+    start program = "/usr/sbin/service home-assistant start"
+    stop program = "/usr/sbin/service home-assistant stop"
+    if failed host 127.0.0.1 port 8123 then restart

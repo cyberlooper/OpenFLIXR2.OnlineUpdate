@@ -1,0 +1,4 @@
+check process LazyLibrarian matching "LazyLibrarian"
+    start program = "/usr/sbin/service lazylibrarian start"
+    stop program = "/usr/sbin/service lazylibrarian stop"
+    if failed host 127.0.0.1 port 5299 then restart

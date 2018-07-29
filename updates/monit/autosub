@@ -1,0 +1,4 @@
+check process AutoSub matching "AutoSub"
+    start program = "/usr/sbin/service autosub start"
+    stop program = "/usr/sbin/service autosub stop"
+    if failed host 127.0.0.1 port 8888 then restart

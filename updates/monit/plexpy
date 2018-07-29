@@ -1,0 +1,4 @@
+check process PlexPy with pidfile /run/plexpy/plexpy.pid
+    start program = "/usr/sbin/service plexpy start"
+    stop program = "/usr/sbin/service plexpy stop"
+    if failed host 127.0.0.1 port 8989 then restart

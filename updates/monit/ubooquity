@@ -1,0 +1,4 @@
+check process Ubooquity matching "java"
+    start program = "/usr/sbin/service ubooquity restart"
+    stop program = "/usr/sbin/service ubooquity stop"
+    if failed host 127.0.0.1 port 2022 then restart

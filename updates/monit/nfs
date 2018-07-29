@@ -1,0 +1,5 @@
+check process NFS matching "nfsd"
+	start program = "/etc/init.d/nfs-kernel-server start"
+	stop program  = "/etc/init.d/nfs-kernel-server stop"
+	if failed host 127.0.0.1 port 2049 type tcp for 2 cycles then restart
+	if 2 restarts within 3 cycles then unmonitor

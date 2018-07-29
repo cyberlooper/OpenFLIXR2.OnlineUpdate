@@ -1,0 +1,4 @@
+check process Netdata with pidfile /opt/netdata/var/run/netdata.pid
+    start program = "/usr/sbin/service netdata start"
+    stop program = "/usr/sbin/service netdata stop"
+    if failed host 127.0.0.1 port 19999 then restart

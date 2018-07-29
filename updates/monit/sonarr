@@ -1,0 +1,4 @@
+check process Sonarr with pidfile /root/.config/NzbDrone/nzbdrone.pid
+    start program = "/usr/sbin/service sonarr start"
+    stop program = "/usr/sbin/service sonarr stop"
+    if failed host 127.0.0.1 port 7979 with timeout 30 seconds then restart

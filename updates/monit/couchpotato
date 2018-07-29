@@ -1,0 +1,4 @@
+check process CouchPotato with pidfile /home/openflixr/.couchpotato.pid
+    start program = "/usr/sbin/service couchpotato start"
+    stop program = "/usr/sbin/service couchpotato stop"
+    if failed port 5050 type tcp then restart

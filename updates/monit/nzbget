@@ -1,0 +1,4 @@
+check process NZBGet matching "nzbget"
+    start program = "/usr/sbin/service nzbget start"
+    stop program = "/usr/sbin/service nzbget stop"
+    if failed host 127.0.0.1 port 6789 then restart
