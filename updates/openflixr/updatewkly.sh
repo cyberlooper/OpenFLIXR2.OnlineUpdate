@@ -52,9 +52,19 @@ link=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -i
 latestver=$(echo $link | awk -F "[\/]" '{print $6}')
 currentver=$(mono /opt/jackett/JackettConsole.exe -v | awk -F "[ .]" '{print $2 "." $3 "." $4}')
 link='https://github.com'$link
-# Write some stuff to the log so we know what happened if it goes wrong
-echo latestver = $latestver
-echo currentver = $currentver
+# Sanity check and write some stuff to the log so we know what happened if it goes wrong
+if [ ! $currentver ]; then
+        echo "Could not get currentver - forcing update"
+        currentver='unknown'
+else
+        echo currentver = $currentver
+fi
+if [ ! $latestver ]; then
+        echo "Could not get latestver - assuming same as currentver to avoid breaking stuff"
+        latestver=$currentver
+else
+        echo latestver = $latestver
+fi
 if [ $currentver != $latestver ]
 then
   echo "Jackett needs updating"
