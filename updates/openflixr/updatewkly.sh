@@ -50,12 +50,12 @@ wasactive=$(systemctl is-active jackett)
 # GitHub's web page format has changed. Just grab the download link and work with that instead of parsing the version title string.
 link=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -i href | grep -i mono.tar.gz | awk -F "[\"]" '{print $2}')
 latestver=$(echo $link | awk -F "[\/]" '{print $6}')
-currentver=$(mono /opt/jackett/JackettConsole.exe -v | awk -F "[ .]" '{print $2 "." $3 "." $4}')
+currentver=$(mono /opt/jackett/JackettConsole.exe --version | awk -F "[ .]" '{print $2 "." $3 "." $4}')
 link='https://github.com'$link
 # Sanity check and write some stuff to the log so we know what happened if it goes wrong
 if [ ! $currentver ]; then
-        echo "Could not get currentver - forcing update"
-        currentver='unknown'
+        echo "Could not get currentver - assuming v0.0.0.0"
+        currentver='v0.0.0.0'
 else
         echo currentver = $currentver
 fi
@@ -65,6 +65,14 @@ if [ ! $latestver ]; then
 else
         echo latestver = $latestver
 fi
+echo $currentver | grep -i error
+if [ $? == 0 ]; then # the currentversion isn't empty but threw an error
+        echo "currentver is an error string - assuming v0.0.0.0"
+        currentver='v0.0.0.0'
+else
+        echo currentver = $currentver
+fi
+
 if [ $currentver != $latestver ]
 then
   echo "Jackett needs updating"
