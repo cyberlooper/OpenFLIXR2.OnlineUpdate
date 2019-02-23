@@ -135,9 +135,11 @@ git pull
 echo ""
 echo "Sub-Zero:"
 cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/
-rm -rf Sub-Zero.bundle
-git clone https://github.com/pannal/Sub-Zero.bundle
-/usr/sbin/service plexmediaserver restart
+## rm -rf Sub-Zero.bundle
+## git clone https://github.com/pannal/Sub-Zero.bundle
+## /usr/sbin/service plexmediaserver restart
+cd Sub-Zero.bundle
+git pull
 echo ""
 echo "WebTools:"
 cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/WebTools.bundle

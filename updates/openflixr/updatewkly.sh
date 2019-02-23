@@ -42,6 +42,7 @@ cd /var/www/spotweb/bin/
 php upgrade-db.php
 chown -R www-data:www-data /var/www/spotweb
 
+
 ## Jackett
 echo ""
 echo "Jackett:"
@@ -50,11 +51,29 @@ wasactive=$(systemctl is-active jackett)
 # GitHub's web page format has changed. Just grab the download link and work with that instead of parsing the version title string.
 link=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -i href | grep -i mono.tar.gz | awk -F "[\"]" '{print $2}')
 latestver=$(echo $link | awk -F "[\/]" '{print $6}')
-currentver=$(mono /opt/jackett/JackettConsole.exe -v | awk -F "[ .]" '{print $2 "." $3 "." $4}')
+currentver=$(mono /opt/jackett/JackettConsole.exe --version | awk -F "[ .]" '{print $2 "." $3 "." $4; exit}')
 link='https://github.com'$link
-# Write some stuff to the log so we know what happened if it goes wrong
-echo latestver = $latestver
-echo currentver = $currentver
+# Sanity check and write some stuff to the log so we know what happened if it goes wrong
+if [ ! $currentver ]; then
+        echo "Could not get currentver - assuming v0.0.0.0"
+        currentver='v0.0.0.0'
+else
+        echo currentver = $currentver
+fi
+if [ ! $latestver ]; then
+        echo "Could not get latestver - assuming same as currentver to avoid breaking stuff"
+        latestver=$currentver
+else
+        echo latestver = $latestver
+fi
+echo $currentver | grep -i error
+if [ $? == 0 ]; then # the currentversion isn't empty but threw an error
+        echo "currentver is an error string - assuming v0.0.0.0"
+        currentver='v0.0.0.0'
+else
+        echo currentver = $currentver
+fi
+
 if [ $currentver != $latestver ]
 then
   echo "Jackett needs updating"
@@ -130,12 +149,10 @@ sh nzbget-latest-bin-linux.run --destdir /opt/nzbget
 ## Netdata
 echo ""
 echo "Netdata:"
-service netdata stop
-killall netdata
 cd /opt/netdata.git/
 git reset --hard
 git pull
-bash netdata-updater.sh
+bash netdata-updater.sh -f
 
 ## Update blocklist
 echo ""

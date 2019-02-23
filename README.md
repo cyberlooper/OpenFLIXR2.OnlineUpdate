@@ -9,4 +9,7 @@ Smart auto-updating will keep everything up-to-date and running smooth. All prog
 
 
 [Get more info at www.openflixr.com](http://www.openflixr.com)
+
 ![OpenFLIXR Landing Page](/img/screen.png)
+
+![OpenFLIXR Landing Page Recent Movies](/img/screen2.png)
