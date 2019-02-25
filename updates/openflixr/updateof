@@ -20,6 +20,8 @@ git pull
 cp /opt/update/updates/openflixr/apt-get-queue /opt/openflixr/apt-get-queue
 cp /opt/update/updates/openflixr/blocklist.sh /opt/openflixr/blocklist.sh
 chmod +x /opt/openflixr/blocklist.sh
+cp /opt/update/updates/openflixr/ipaddress /opt/openflixr/ipaddress
+chmod +x /opt/openflixr/ipaddress
 cp /opt/update/updates/openflixr/checkinet /opt/openflixr/checkinet
 chmod +x /opt/openflixr/checkinet
 cp /opt/update/updates/openflixr/purgeoldkernels /opt/openflixr/purgeoldkernels
