@@ -12,18 +12,18 @@ echo "-----------------------------------------------------"
 echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
-## OpenFLIXR Update version 2.7
+## OpenFLIXR Update version 2.8
+
+# updates
 cp /opt/update/updates/configs/nginx.conf /etc/nginx/nginx.conf
 cp /opt/update/updates/htpcmanager/openflixr/* /opt/HTPCManager/interfaces/default/css/themes/openflixr
 rm /etc/monit/conf.d/dnsmasq
 cp -R /opt/update/latest/* /usr/share/nginx/html/latest
-service mylar stop
 crudini --set /opt/Mylar/config.ini Perms chowner openflixr
 crudini --set /opt/Mylar/config.ini Perms chgroup openflixr
 chown openflixr: -R /opt/Mylar
 chown openflixr:openflixr /home/openflixr/.config/Lidarr/config.xml
 chown -R www-data: /usr/share/nginx/html/
-bash /opt/openflixr/apt-get-queue python-dnspython
 pip install -U pip setuptools
 mv /opt/sickrage/ /opt/sickrage.hijacked
 git clone https://github.com/SickChill/SickChill.git /opt/sickrage
@@ -44,45 +44,7 @@ sed -i 's/Group=sickrage/Group=openflixr/g' /etc/systemd/system/sickrage.service
 sed -i '/Group=openflixr/a TimeoutSec=600' /etc/systemd/system/sickrage.service
 systemctl enable sickrage.service
 systemctl daemon-reload
-
-sed -i 's/location \/jackett/location \/jackettold/' /etc/nginx/sites-enabled/reverse
-sed -i '/# add_config_3/a \
-location /jackett/ {\
-   proxy_http_version 1.1;\
-   proxy_set_header   Upgrade $http_upgrade;\
-   proxy_set_header   Connection keep-alive;\
-   proxy_cache_bypass $http_upgrade;\
-   proxy_set_header   X-Forwarded-Proto $scheme;\
-   proxy_pass http://127.0.0.1:9117/;\
-   proxy_set_header Host $host;\
-   proxy_set_header X-Real-IP $remote_addr;\
-   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\
- }\
-' /etc/nginx/sites-enabled/reverse
-
-sed -i '/# add_config_4/a \
-location /comics/admin {\
-    proxy_pass http://127.0.0.1:2023/comics/admin;\
-    proxy_set_header Host $host;\
-    proxy_set_header X-Real-IP $remote_addr;\
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\
-  }\
-' /etc/nginx/sites-enabled/reverse
-
 crudini --set /root/.config/qBittorrent/qBittorrent.conf Preferences 'WebUI\Address' '*'
-
-## update version
-sed -i 's/2.*/2.8 Blade Runner 2019/' /opt/openflixr/version
-crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.8
-version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
-sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
 
 ## let system know update has been installed
 touch /opt/update/doneupdate/j_update_10
-
-# update system
-bash /opt/openflixr/updateof
-bash /opt/openflixr/updatewkly.sh
-
-# reboot system just to be sure
-reboot now

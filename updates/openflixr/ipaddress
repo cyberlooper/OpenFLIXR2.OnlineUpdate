@@ -1,7 +1,9 @@
+
 #!/bin/bash
 
 #IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 IP=$(hostname -I | awk '{print $1}')
 echo "------------------------------------------"
 echo -e "OpenFLIXR Media Server: \033[36mhttp://$IP \033[0m"
-echo -e "Configure: \033[32mhttp://$IP/setup\033[0m"
+echo -e "Setup Web: \033[32mhttp://$IP/setup\033[0m"
+echo -e "Setup SSH: \033[32msudo setupopenflixr\033[0m"

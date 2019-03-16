@@ -39,16 +39,6 @@ cp -r -u Lidarr*/* /opt/Lidarr/
 rm -rf Lidarr*/
 rm Lidarr.develop.*
 chown openflixr:openflixr -R /opt/Lidarr
-
-sed -i '/# add_config_2/a \
-location /lidarr {\
-    proxy_pass http:\/\/127.0.0.1:8686;\
-    proxy_set_header Host $host;\
-    proxy_set_header X-Real-IP $remote_addr;\
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\
-        }\
-' /etc/nginx/sites-enabled/reverse
-
 cp /opt/update/updates/monit/lidarr /etc/monit/conf.d/lidarr
 cp /opt/update/updates/monit/lidarr /opt/config/monit/lidarr
 

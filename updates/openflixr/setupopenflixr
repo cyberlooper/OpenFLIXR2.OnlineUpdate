@@ -1,0 +1,10 @@
+#!/bin/bash
+THISUSER=$(whoami)
+    if [ $THISUSER != 'root' ]
+        then
+            echo 'You must use sudo to run this script, sorry!'
+            exit 1
+    fi
+
+cd /opt/OpenFLIXR2.SetupScript
+bash main.sh

@@ -38,29 +38,17 @@ cp /opt/update/updates/openflixr/logio.sh /opt/openflixr/logio.sh
 chmod +x /opt/openflixr/logio.sh
 cp /opt/update/updates/openflixr/hotfixes /opt/openflixr/hotfixes
 cp /opt/update/updates/monit/* /etc/monit/conf.d/
+cp /opt/update/updates/openflixr/createnginxconfig.sh /opt/openflixr/createnginxconfig.sh
+chmod +x /opt/openflixr/createnginxconfig.sh
+cp /opt/update/updates/openflixr/letsencrypt.sh /opt/openflixr/letsencrypt.sh
+chmod +x /opt/openflixr/letsencrypt.sh
+cp /opt/update/updates/openflixr/cleanup.sh /opt/openflixr/cleanup.sh
+chmod +x /opt/openflixr/cleanup.sh
 
-## Pip Apps
+## Nginx config
 echo ""
-echo "Home-Assistant:"
-sudo -H pip3 install --upgrade homeassistant
-echo ""
-echo "Mopidy-Mopify:"
-sudo -H pip install --upgrade Mopidy
-echo ""
-echo "Mopidy-Mopify:"
-sudo -H pip install --upgrade Mopidy-Mopify
-echo ""
-echo "Mopidy-Moped:"
-sudo -H pip install --upgrade Mopidy-Moped
-echo ""
-echo "Mopidy-Iris:"
-sudo -H pip install --upgrade Mopidy-Iris
-echo ""
-echo "pafy:"
-sudo -H pip install --upgrade pafy
-echo ""
-echo "Mopidy-WebSettings"
-sudo -H pip install --upgrade Mopidy-WebSettings
+echo "Create nginx config:"
+bash /opt/openflixr/createnginxconfig.sh
 
 ## Create Download dirs when mounted to a network share
 cd /opt/openflixr
@@ -68,136 +56,11 @@ echo ""
 echo "create download dirs:"
 bash createdirs
 
-## Git Apps
-echo ""
-echo "OpenFLIXR Wizard Update:"
-cd /usr/share/nginx/html/setup
-rm /usr/share/nginx/html/setup/.git/index.lock
-git reset --hard
-git pull
-echo ""
-echo "OpenFLIXR Landing Page:"
-cd /usr/share/nginx/html/openflixr
-git reset --hard
-git pull
-echo ""
-echo "CouchPotato:"
-cd /opt/CouchPotato
-git fetch --all
-git reset --hard origin/master
-git pull origin master
-/usr/sbin/service couchpotato restart
-echo ""
-echo "Headphones:"
-cd /opt/headphones
-git pull
-/usr/sbin/service headphones restart
-echo ""
-echo "HTPC Manager:"
-cd /opt/HTPCManager
-git pull
-/usr/sbin/service htpcmanager stop
-sleep 3
-/usr/sbin/service htpcmanager start
-echo ""
-echo "Mylar:"
-cd /opt/Mylar
-git pull
-/usr/sbin/service mylar restart
-echo ""
-echo "Plexpy:"
-cd /opt/plexpy
-git pull
-/usr/sbin/service plexpy restart
-echo ""
-echo "SickRage:"
-cd /opt/sickrage
-git fetch --all
-git reset --hard origin/master
-git pull origin master
-echo ""
-echo "Letsencrypt:"
-cd /opt/letsencrypt
-git reset --hard
-git pull
-echo ""
-echo "AutoSub:"
-cd /opt/autosub
-git reset --hard
-git pull
-/usr/sbin/service autosub restart
-echo ""
-echo "ComicReader:"
-cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/ComicReader.bundle
-git pull
-echo ""
-echo "PlexRequestChannel:"
-cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/PlexRequestChannel.bundle
-git pull
-echo ""
-echo "Sub-Zero:"
-cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/
-## rm -rf Sub-Zero.bundle
-## git clone https://github.com/pannal/Sub-Zero.bundle
-## /usr/sbin/service plexmediaserver restart
-cd Sub-Zero.bundle
-git pull
-echo ""
-echo "WebTools:"
-cd /var/lib/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/Plug-ins/WebTools.bundle
-git pull
-echo ""
-echo "Groovy:"
-cd /opt/groovy
-git pull
-echo ""
-echo "NZBhydra2:"
- wasactive=$(systemctl is-active nzbhydra2)
- link=$(wget -q https://github.com/theotherp/nzbhydra2/releases/latest -O - | grep -i href | grep -i linux.zip | awk -F "[\"]" '{print $2}')
- latestver=$(echo $link | awk -F "[\/]" '{print $6}')
- latestverurl=$(echo $link | awk -F "[\/]" '{print $1"/"$2"/"$3"/"$4"/"$5"/"$6"/"$7}')
- link='https://github.com'$latestverurl
- # Write some stuff to the log so we know what happened if it goes wrong
- echo latestver = $latestver
-   echo "NZBhydra2 needs updating"
-   echo "download link = $link"
-   service nzbhydra2 stop
-   cd /tmp/
-   rm nzbhydra2* 2> /dev/null
-   wget -q $link || echo 'Download failed!'
-   unzip -o nzbhydra2*.zip -d /opt/nzbhydra2/
-   rm nzbhydra2* 2> /dev/null
-   chown openflixr: -R /opt/nzbhydra2
-   if [ $wasactive == "active" ]
-   then
-     echo "Starting NZBhydra2 after update"
-     service nzbhydra2 start
-   else
-     echo "NZBhydra2 was not running before, so not starting it now"
-   fi
-echo ""
-echo "LazyLibrarian:"
-cd /opt/LazyLibrarian
-git reset --hard
-git pull
-echo ""
-echo "Ubooquity Plex Theme:"
-cd /opt/ubooquity/themes/plextheme
-git pull
-echo ""
-echo "Cleanup:"
-rm /usr/share/nginx/html/setup/setup.sh 2> /dev/null
-echo ""
-echo "hotfixes:"
-/sbin/ethtool -K eth0 gso off gro off tso off
-service home-assistant restart
-echo ""
-echo "Set Version"
-version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
-sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
-
 ## hotfixes
 bash /opt/openflixr/hotfixes
 
 ## User script
 bash /opt/openflixr/userscript.sh
+
+## let setup know updateof finished
+echo "updateof finished"

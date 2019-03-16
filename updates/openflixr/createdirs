@@ -19,6 +19,7 @@ mkdir /mnt/series
 mkdir /mnt/music
 mkdir /mnt/books
 mkdir /mnt/syncthing
+mkdir /opt/openflixr/nginx/
 
 if mount | grep /mnt/downloads > /dev/null; then
 mkdir /mnt/downloads/nzbget

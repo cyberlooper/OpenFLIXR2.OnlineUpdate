@@ -13,11 +13,6 @@ echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
 ## OpenFLIXR Update version 2.5
-service monit stop
-
-# nginx php 7.2
-sed -i 's/php5-fpm.sock/php\/php7.2-fpm.sock/' /etc/nginx/sites-available/reverse
-sed -i 's/php7.0-fpm.sock/php7.2-fpm.sock/g' /etc/nginx/sites-enabled/reverse
 
 # grav fixes
 chown www-data:www-data -R /usr/share/nginx/html/user
@@ -26,7 +21,6 @@ chmod +777 -R /usr/share/nginx/html/cache
 cd /usr/share/nginx/html
 bin/gpm selfupgrade -f -y
 bin/gpm update -f -y
-sed -i 's/index index.html index.php;/index index.php;/' /etc/nginx/sites-enabled/reverse
 
 # lidarr fix
 mkdir /home/openflixr/.config/Lidarr
@@ -84,27 +78,12 @@ service nzbhydra2 stop
 cp /opt/update/updates/configs/nzbhydra.yml /opt/nzbhydra2/data/nzbhydra.yml
 
 # package updates
-apt-get update -y
-apt-get purge apache2 php7.1* php7.0* -y
 systemctl disable lighttpd.service
 systemctl disable apache2
 systemctl enable nginx
-DEBIAN_FRONTEND=noninteractive apt-get -y --with-new-pkgs upgrade
-bash /opt/openflixr/apt-get-queue php7.2-dev php7.2-fpm ombi sshfs vim python-cairocffi python3-cairocffi php7.2-zip php7.2-common libzip5 python-cffi python-pycparser python3-ply python3-cffi-backend python3-cffi python3-pycparser python-ply python3.6 python3.6-venv python3.6-dev
-sudo -H pip install psycopg2-binary
-python3.6 -m pip install homeassistant --upgrade pip
+pip install psycopg2-binary
+pip3 install psycopg2-binary
 rm /etc/systemd/system/plexrequestsnet.service
-
-# kernel update fix
-cd /tmp/
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17.5/linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-sudo dpkg -i linux-headers-4.17.5-041705_4.17.5-041705.201807081431_all.deb
-sudo dpkg -i linux-headers-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-sudo dpkg -i linux-modules-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
-sudo dpkg -i linux-image-unsigned-4.17.5-041705-generic_4.17.5-041705.201807081431_amd64.deb
 
 ## let system know update has been installed
 touch /opt/update/doneupdate/h_update_8

@@ -1,4 +1,4 @@
-check process SickRage with pidfile /home/openflixr/.sickrage.pid
+check process SickRage matching "sickrage"
     start program = "/usr/sbin/service sickrage start"
     stop program = "/usr/sbin/service sickrage stop"
     if failed host 127.0.0.1 port 8081 then restart

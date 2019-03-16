@@ -1,0 +1,63 @@
+server	{
+listen 80;
+access_log /var/log/nginx/access.log;
+error_log /var/log/nginx/error.log;
+error_page 401 /error/401/index.html;
+error_page 403 /error/403/index.html;
+error_page 404 /error/404/index.html;
+error_page 502 /error/502/index.html;
+error_page 500 /error/500/index.html;
+auth_basic "OpenFLIXR Login";
+auth_basic_user_file /etc/nginx/.htpasswd;
+server_name openflixr;  #donotremove_domainname
+server_tokens off;
+add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noodp, notranslate, noimageindex";
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-XSS-Protection "1;mode=block";expires 1y;
+add_header Referrer-Policy "no-referrer-when-downgrade";
+
+location ^~ /error/ {
+	auth_basic off;
+	internal;
+	}
+
+location /openflixr {
+	add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noodp, notranslate, noimageindex";
+	add_header Strict-Transport-Security "max-age=31536000;includeSubDomains" always;
+	add_header X-Content-Type-Options "nosniff" always;
+	add_header X-Frame-Options "SAMEORIGIN" always;
+	add_header X-XSS-Protection "1;mode=block";expires 1y;
+	add_header Referrer-Policy "no-referrer-when-downgrade";
+	add_header Cache-Control "public";
+	auth_basic off;
+	index index.html;
+	root /usr/share/nginx/html;
+	}
+
+location / {
+	add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noodp, notranslate, noimageindex";
+	add_header Strict-Transport-Security "max-age=31536000;includeSubDomains" always;
+	add_header X-Content-Type-Options "nosniff" always;
+	add_header X-Frame-Options "SAMEORIGIN" always;
+	add_header X-XSS-Protection "1;mode=block";expires 1y;
+	add_header Referrer-Policy "no-referrer-when-downgrade";
+	auth_basic off;
+	index index.php;
+	root /usr/share/nginx/html;
+	try_files $uri $uri/ /index.php?_url=$uri&$query_string;
+	location ~* /(\.git|cache|bin|logs|backup|tests)/.*$ { return 403; }
+	location ~* /(system|vendor)/.*\.(txt|xml|md|html|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ { return 403; }
+	location ~* /user/.*\.(txt|md|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ { return 403; }
+	location ~ /(LICENSE\.txt|composer\.lock|composer\.json|nginx\.conf|web\.config|htaccess\.txt|\.htaccess) { return 403; }
+	}
+
+location ~ \.php$ {
+	auth_basic off;
+	fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+	fastcgi_split_path_info ^(.+\.php)(/.+)$;
+	fastcgi_index index.php;
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+	}

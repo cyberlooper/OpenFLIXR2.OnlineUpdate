@@ -1,0 +1,23 @@
+location /nas {
+	auth_basic off;
+	proxy_pass https://192.168.1.10:5111/;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+location /nas/sharing {
+	auth_basic off;
+	proxy_pass https://192.168.1.10:5111/sharing/;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+location /synohdpack {
+	proxy_pass https://192.168.1.10:5111/synohdpack/;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+

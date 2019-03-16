@@ -1,0 +1,21 @@
+location /request/ {
+	auth_basic off;
+	proxy_pass http://127.0.0.1:3579;
+	proxy_set_header Host $host;
+	proxy_set_header X-Forwarded-Host $server_name;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Ssl on;
+	proxy_set_header X-Forwarded-Proto $scheme;
+	proxy_read_timeout  90;
+	proxy_redirect http://127.0.0.1:3579 https://$host;
+	}
+
+location /images {
+	auth_basic off;
+	proxy_pass http://127.0.0.1:3579/images;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+

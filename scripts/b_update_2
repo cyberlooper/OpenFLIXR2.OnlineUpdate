@@ -13,8 +13,41 @@ echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
 ## OpenFLIXR Update version 2.0
+# free memory
+service monit stop
+service plexmediaserver stop
+service plexpy stop
+service sickrage stop
+service couchpotato stop
+service ubooquity stop
+service nzbhydra stop
+service nzbhydra2 stop
+service nzbget stop
+service radarr stop
+service sonarr stop
+service lidarr stop
+service mysql stop
+service plexrequestsnet stop
+service docker stop
+service sabnzbdplus stop
+service netdata stop
+service syncthing@openflixr stop
+service home-assistant stop
+service headphones stop
+service mylar stop
+service htpcmanager stop
+service autosub stop
+service lazylibrarian stop
+service qbittorrent stop
+service logio stop
+service jackett stop
+service mopidy stop
+service php7.0-fpm stop
+service webmin stop
+killall python
+killall Ombi
 
-## fixes
+# fixes
 rm /etc/dhcpcd.conf
 
 ## let system know update has been installed

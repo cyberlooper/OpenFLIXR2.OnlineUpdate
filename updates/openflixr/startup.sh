@@ -1,9 +1,6 @@
 #!/bin/bash
-cd /opt/openflixr/
-echo -e "GET http://google.com HTTP/1.0\n\n" | nc google.com 80 > /dev/null 2>&1
-
-if [ $? -eq 0 ]; then
-bash updateof
+if nc -zw1 8.8.8.8 53; then
+bash /opt/openflixr/updateof
 else
 echo "Can't update, no Internet Access"
 	exit 1

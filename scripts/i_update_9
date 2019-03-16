@@ -13,6 +13,8 @@ echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
 ## OpenFLIXR Update version 2.5.1
+
+# updates
 cd /opt/update
 git pull
 cp /opt/update/updates/openflixr/apt-get-queue /opt/openflixr/apt-get-queue

@@ -1,0 +1,4 @@
+location = / {						#gravopenflixr
+	auth_basic off;					#gravopenflixr
+	return 301 /openflixr/;	#gravopenflixr
+	}												#gravopenflixr

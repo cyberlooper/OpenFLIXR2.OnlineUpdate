@@ -26,16 +26,12 @@ echo deb https://downloads.plex.tv/repo/deb public main | sudo tee /etc/apt/sour
 curl https://downloads.plex.tv/plex-keys/PlexSign.key | sudo apt-key add -
 
 # fix syncthing
-service monit stop
-service syncthing@openflixr stop
 rm -r /home/openflixr/.config/syncthing/*
 service syncthing@openflixr start
 service syncthing@openflixr stop
 sed -i 's/<theme>default<\/theme>/<theme>dark<\/theme><insecureSkipHostcheck>true<\/insecureSkipHostcheck>/' /home/openflixr/.config/syncthing/config.xml
 sed -i 's/<startBrowser>true<\/startBrowser>/<startBrowser>false<\/startBrowser>/' /home/openflixr/.config/syncthing/config.xml
 sed -i 's/<urAccepted>0<\/urAccepted>/<urAccepted>-1<\/urAccepted>/' /home/openflixr/.config/syncthing/config.xml
-service syncthing@openflixr start
-service monit start
 
 # Fix latest page
 cp /opt/update/latest/inc/imdb_class.php /usr/share/nginx/html/latest/inc/imdb_class.php

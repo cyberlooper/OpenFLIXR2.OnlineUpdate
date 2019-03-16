@@ -3,3 +3,6 @@ service monit stop
 
 # monit start
 service monit start
+
+# python warnings
+export PYTHONWARNINGS="ignore:Unverified HTTPS request"

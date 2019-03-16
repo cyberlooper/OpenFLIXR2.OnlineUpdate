@@ -15,15 +15,12 @@ echo "-----------------------------------------------------"
 ## OpenFLIXR Update version 2.3
 
 # ombi
-service monit stop
 systemctl stop plexrequestsnet
 systemctl disable plexrequestsnet
 rm /etc/systemd/system/plexrequestsnet.service
 rm /etc/monit/conf.d/plexrequests
 systemctl daemon-reload
 systemctl reset-failed
-echo "deb [arch=amd64,armhf] http://repo.ombi.turd.me/stable/ jessie main" | tee "/etc/apt/sources.list.d/ombi.list"
-wget -qO - https://repo.ombi.turd.me/pubkey.txt | apt-key add -
 cp /opt/update/updates/configs/ombi.service /etc/systemd/system/ombi.service
 systemctl daemon-reload
 systemctl enable ombi.service
@@ -40,11 +37,7 @@ pip uninstall --yes Mopidy-Spotmop
 pip3 uninstall --yes Mopidy-Spotmop
 pip3.5 uninstall --yes Mopidy-Spotmop
 chown -R openflixr:openflixr /opt/sickrage/.git
-sed -i 's/Prompt=.*/Prompt=never/' /etc/update-manager/release-upgrades
-sed -i 's/proxy_pass http:\/\/127.0.0.1\/web;/proxy_pass http:\/\/127.0.0.1\/web;proxy_set_header Host $host;proxy_set_header X-Real-IP $remote_addr;proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;/' /etc/nginx/sites-enabled/reverse
-service syncthing@openflixr stop
 sed -i 's/<theme>default<\/theme>/<theme>dark<\/theme><insecureSkipHostcheck>true<\/insecureSkipHostcheck>/' /home/openflixr/.config/syncthing/config.xml
-service lazylibrarian stop
 crudini --set /opt/LazyLibrarian/lazylibrarian.ini General audio_dir "/mnt/audiobooks"
 autorun=$(crudini --get /root/.config/qBittorrent/qBittorrent.conf AutoRun enabled)
 if [ "$autorun" == 'false' ]
@@ -54,7 +47,6 @@ if [ "$autorun" == 'false' ]
   fi
 
 # ubooquity
-service ubooquity stop
 cd /tmp
 wget http://vaemendis.net/ubooquity/downloads/Ubooquity-2.1.1.zip
 unzip /tmp/Ubooquity-2.1.1.zip
