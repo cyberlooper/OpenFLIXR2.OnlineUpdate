@@ -17,6 +17,7 @@ echo "-----------------------------------------------------"
 cp /opt/update/updates/configs/logrotate/netdata /etc/logrotate.d
 chmod -x /etc/systemd/system/sickrage.service
 systemctl daemon-reload
+cp /opt/update/updates/openflixr/createnginxconfig.sh /opt/openflixr/createnginxconfig.sh
 chmod +x /opt/openflixr/createnginxconfig.sh
 
 ## system fixes
