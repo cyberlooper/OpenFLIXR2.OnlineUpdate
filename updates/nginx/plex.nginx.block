@@ -1,4 +1,5 @@
 location /web {
+	http2_push_preload on;
 	auth_basic off;
 	proxy_pass http://127.0.0.1:32400;
 	proxy_set_header Host $host;
@@ -26,6 +27,7 @@ location /web {
 	}
 
 location /plex {
+	http2_push_preload on;
 	auth_basic off;
 	proxy_pass http://127.0.0.1/web;
 	proxy_set_header Host $host;
@@ -52,4 +54,3 @@ location /plex {
 	proxy_redirect off;
 	proxy_buffering off;
 	}
-

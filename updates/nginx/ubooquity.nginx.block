@@ -1,4 +1,5 @@
 location /comics {
+	http2_push_preload on;
 	satisfy any;
 	allow 10.0.0.0/8;
 	allow 172.16.0.0/12;
@@ -17,4 +18,3 @@ location /comics/admin {
 	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	}
-

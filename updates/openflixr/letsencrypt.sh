@@ -18,7 +18,7 @@ letsencrypt=$(crudini --get /usr/share/nginx/html/setup/config.ini access letsen
     if [ "$letsencrypt" == 'on' ]
         then
 openssl dhparam -out /etc/nginx/dhparam.pem 2048
-bash /opt/acme/acme.sh --issue --alpn -d '$domainname' -d 'www.$domainname' --keylength ec-384 --cert-home /etc/letsencrypt/live --pre-hook "service monit stop && service nginx stop" --post-hook "service monit start && service nginx start"
+bash /opt/acme/acme.sh --issue --alpn -d "$domainname" -d www."$domainname" --keylength ec-384 --ocsp-must-staple --cert-home /etc/letsencrypt/live --pre-hook "service monit stop && service nginx stop" --post-hook "service monit start && service nginx start"
 else
 echo "Let's Encrypt is disabled"
 fi

@@ -39,3 +39,6 @@ for f in $FILES
     fi
   done
 run-parts /opt/update/scripts
+
+## let setup know onlineupdate finished
+echo "onlineupdate finished"

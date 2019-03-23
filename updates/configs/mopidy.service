@@ -1,0 +1,17 @@
+[Unit]
+Description=Mopidy music server
+After=avahi-daemon.service
+After=dbus.service
+After=network.target
+After=nss-lookup.target
+After=pulseaudio.service
+After=remote-fs.target
+After=sound.target
+
+[Service]
+User=mopidy
+PermissionsStartOnly=true
+ExecStart=/usr/bin/python2.7 /usr/local/bin/mopidy --config /usr/share/mopidy/conf.d:/etc/mopidy/mopidy.conf
+
+[Install]
+WantedBy=multi-user.target

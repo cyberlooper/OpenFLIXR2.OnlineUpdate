@@ -75,6 +75,7 @@ echo latestver = $latestver
 
 service nzbhydra2 start
 service nzbhydra2 stop
+mkdir -p /opt/nzbhydra2/data/
 cp /opt/update/updates/configs/nzbhydra.yml /opt/nzbhydra2/data/nzbhydra.yml
 
 # package updates

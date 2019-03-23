@@ -47,6 +47,8 @@ if [ "$autorun" == 'false' ]
   fi
 
 # ubooquity
+update-rc.d -f ubooquity remove
+rm /etc/init.d/ubooquity
 cd /tmp
 wget http://vaemendis.net/ubooquity/downloads/Ubooquity-2.1.1.zip
 unzip /tmp/Ubooquity-2.1.1.zip
@@ -57,8 +59,6 @@ mv /opt/ubooquity/preferences.xml /opt/ubooquity/preferences.xml.bak
 systemctl daemon-reload
 systemctl enable ubooquity.service
 git clone https://github.com/FinalAngel/plextheme /opt/ubooquity/themes/plextheme
-update-rc.d -f ubooquity remove
-rm /etc/init.d/ubooquity
 
 ## let system know update has been installed
 touch /opt/update/doneupdate/e_update_5

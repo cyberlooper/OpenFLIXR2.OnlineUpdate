@@ -201,7 +201,6 @@ rm master
 rm -rf spotweb-spotweb*/
 cd /var/www/spotweb/bin/
 php upgrade-db.php
-chown -R www-data:www-data /var/www/spotweb
 
 ## Jackett
 echo ""
@@ -328,13 +327,8 @@ systemctl disable lighttpd.service
 
 ## Latest page imdb grabber
 wget https://raw.githubusercontent.com/FabianBeiner/PHP-IMDB-Grabber/master/imdb.class.php -O /usr/share/nginx/html/latest/inc/imdb_class.php
-chmod 755 /usr/share/nginx/html/latest/inc/imdb_class.php
-chown www-data:www-data /usr/share/nginx/html/latest/inc/*
 
 ## Grav
-chown www-data:www-data -R /usr/share/nginx/html/user
-chown www-data:www-data -R /usr/share/nginx/html/cache
-chmod +777 -R /usr/share/nginx/html/cache
 cd /usr/share/nginx/html
 bin/gpm selfupgrade -f -y
 bin/gpm update -f -y
@@ -365,9 +359,11 @@ echo "Cleanup:"
 cd /opt/openflixr
 bash cleanup.sh
 
+## Fix Permissions
 echo ""
-echo "Nginx fix"
-mkdir /var/log/nginx
+echo "Fix Permissions:"
+cd /opt/openflixr
+bash fixpermissions.sh
 
 # restore pi-hole
 sed -i 's/nameserver.*/nameserver 127.0.0.1/' /etc/resolv.conf

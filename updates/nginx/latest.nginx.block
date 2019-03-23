@@ -1,10 +1,12 @@
 location /latest {
+	http2_push_preload on;
 	auth_basic off;
 	index index.php;
 	root /usr/share/nginx/html;
         }
 
 location ~ /latest/.+.php$ {
+	http2_push_preload on;
 	auth_basic off;
 	fastcgi_split_path_info ^(.+.php)(/.+)$;
 	fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;

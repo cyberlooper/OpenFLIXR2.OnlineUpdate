@@ -6,53 +6,13 @@ THISUSER=$(whoami)
            exit 1
     fi
 
-exec 1> >(tee -a /var/log/openflixrupdate/k_update_11.log) 2>&1
+exec 1> >(tee -a /var/log/openflixrupdate/updateto29manual.log) 2>&1
 TODAY=$(date)
 echo "-----------------------------------------------------"
 echo "Date:          $TODAY"
 echo "-----------------------------------------------------"
 
-## OpenFLIXR Update version 2.9
-# updates
-cp /opt/update/updates/configs/logrotate/netdata /etc/logrotate.d
-chmod -x /etc/systemd/system/sickrage.service
-systemctl daemon-reload
-cp /opt/update/updates/openflixr/createnginxconfig.sh /opt/openflixr/createnginxconfig.sh
-chmod +x /opt/openflixr/createnginxconfig.sh
-
-## system fixes
-echo "compatibility_level=2" >> /etc/postfix/main.cf
-sed -i '/KeyRegenerationInterval/d' /etc/ssh/sshd_config
-sed -i '/ServerKeyBits/d' /etc/ssh/sshd_config
-sed -i '/RSAAuthentication/d' /etc/ssh/sshd_config
-sed -i '/RhostsRSAAuthentication/d' /etc/ssh/sshd_config
-sed -i '/UsePrivilegeSeparation/d' /etc/ssh/sshd_config
-sed -i '/TimeoutStopUSec/d' /etc/systemd/system.conf
-sed -i '/echo noop >\/sys\/block\/sda\/queue\/scheduler/d' /etc/rc.local
-pip3 install homeassistant
-
-## (re)enable swap
-fallocate -l 4G /swapfile
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab
-sed -i 's/swapoff -a//' /etc/rc.local
-
-## add OpenFLIXR2.SetupScript
-git clone https://github.com/openflixr/OpenFLIXR2.SetupScript /opt/OpenFLIXR2.SetupScript
-cp /opt/update/updates/openflixr/setupopenflixr /usr/local/bin/setupopenflixr
-chmod +x /usr/local/bin/setupopenflixr
-echo 'echo ""' >>~/.bashrc
-echo 'echo -e "Update OpenFLIXR  \033[32msudo updateopenflixr\033[0m"' >>~/.bashrc
-echo 'echo -e "Setup OpenFLIXR   \033[32msudo setupopenflixr\033[0m"' >>~/.bashrc
-echo 'echo ""' >>~/.bashrc
-
-### Start OS updates
-if nc -zw1 8.8.8.8 53; then
-
-# be 100% sure pi-hole isn't shitting around
-sed -i 's/nameserver.*/nameserver 8.8.8.8/' /etc/resolv.conf
+## OpenFLIXR Update version 2.9 manual
 
 # free memory
 service monit stop
@@ -96,8 +56,8 @@ service nginx restart
 
 # Wait for apt release
 while [ "x$(lsof /var/lib/dpkg/lock)" != "x" ] ; do
-    echo "OpenFLIXR update is waiting for apt release..."
-    sleep 5
+    echo "OpenFLIXR update is waiting for apt release, this can take up to an hour or more"
+    sleep 10
 done
 
 rm /etc/apt/sources.list.d/nijel-ubuntu-phpmyadmin-xenial*
@@ -231,9 +191,6 @@ git clone https://github.com/Neilpang/acme.sh.git /opt/acme
 ( crontab -l | grep -v -F '30 2 * * 1  /opt/letsencrypt/letsencrypt-auto renew --standalone --pre-hook "service nginx stop" --post-hook "service nginx start" >> /var/log/le-renew.log' ) | crontab -
 bash /opt/acme/acme.sh --install --upgrade --auto-upgrade
 
-# restore pi-hole
-sed -i 's/nameserver.*/nameserver 127.0.0.1/' /etc/resolv.conf
-
 # system fixes
 sed -i 's/;extension=curl/extension=curl/g' /etc/php/7.3/fpm/php.ini
 echo "DNSStubListener=no" >> /etc/systemd/resolved.conf
@@ -252,10 +209,3 @@ systemctl daemon-reload
 
 ## shellinabox
 sed -i 's/SHELLINABOX_ARGS.*/SHELLINABOX_ARGS="--no-beep --localhost-only --disable-ssl --css \/opt\/update\/updates\/openflixr\/shellinabox.css"/' /etc/default/shellinabox
-
-## let system know update has been installed
-touch /opt/update/doneupdate/k_update_11
-
-else
-echo "Can't update OpenFLIXR to 2.9, no Internet Access"
-fi

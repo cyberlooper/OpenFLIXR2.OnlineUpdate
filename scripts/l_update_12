@@ -1,0 +1,100 @@
+#!/bin/bash
+THISUSER=$(whoami)
+    if [ $THISUSER != 'root' ]
+        then
+            echo 'You must use sudo to run this script, sorry!'
+           exit 1
+    fi
+
+exec 1> >(tee -a /var/log/openflixrupdate/l_update_12.log) 2>&1
+TODAY=$(date)
+echo "-----------------------------------------------------"
+echo "Date:          $TODAY"
+echo "-----------------------------------------------------"
+
+## OpenFLIXR Update version 2.9.1
+
+# updates
+cp /opt/update/updates/configs/nginx.conf /etc/nginx/nginx.conf
+rm /etc/resolv.conf
+ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf
+resolvconf -u
+sed -i 's/# Disable IPv6//' /etc/sysctl.conf
+sed -i 's/net.ipv6.conf.all.disable_ipv6 = 1//' /etc/sysctl.conf
+sed -i 's/net.ipv6.conf.default.disable_ipv6 = 1//' /etc/sysctl.conf
+sed -i 's/net.ipv6.conf.lo.disable_ipv6 = 1//' /etc/sysctl.conf
+sysctl -p
+
+## OpenFLIXR
+echo ""
+echo "OpenFLIXR updates:"
+cp /opt/update/updates/openflixr/apt-get-queue /opt/openflixr/apt-get-queue
+cp /opt/update/updates/openflixr/blocklist.sh /opt/openflixr/blocklist.sh
+chmod +x /opt/openflixr/blocklist.sh
+cp /opt/update/updates/openflixr/ipaddress /opt/openflixr/ipaddress
+chmod +x /opt/openflixr/ipaddress
+cp /opt/update/updates/openflixr/checkinet /opt/openflixr/checkinet
+chmod +x /opt/openflixr/checkinet
+cp /opt/update/updates/openflixr/purgeoldkernels /opt/openflixr/purgeoldkernels
+chmod +x /opt/openflixr/purgeoldkernels
+cp /opt/update/updates/openflixr/startup.sh /opt/openflixr/startup.sh
+chmod +x /opt/openflixr/startup.sh
+cp /opt/update/updates/openflixr/updatewkly.sh /opt/openflixr/updatewkly.sh
+chmod +x /opt/openflixr/updatewkly.sh
+cp /opt/update/updates/openflixr/updateof /opt/openflixr/updateof
+chmod +x /opt/openflixr/updateof
+cp /opt/update/updates/openflixr/createdirs /opt/openflixr/createdirs
+chmod +x /opt/openflixr/createdirs
+cp /opt/update/updates/openflixr/logio.sh /opt/openflixr/logio.sh
+chmod +x /opt/openflixr/logio.sh
+cp /opt/update/updates/openflixr/hotfixes /opt/openflixr/hotfixes
+cp /opt/update/updates/monit/* /etc/monit/conf.d/
+cp /opt/update/updates/openflixr/createnginxconfig.sh /opt/openflixr/createnginxconfig.sh
+chmod +x /opt/openflixr/createnginxconfig.sh
+cp /opt/update/updates/openflixr/letsencrypt.sh /opt/openflixr/letsencrypt.sh
+chmod +x /opt/openflixr/letsencrypt.sh
+cp /opt/update/updates/openflixr/cleanup.sh /opt/openflixr/cleanup.sh
+chmod +x /opt/openflixr/cleanup.sh
+cp /opt/update/updates/openflixr/fixpermissions.sh /opt/openflixr/fixpermissions.sh
+chmod +x /opt/openflixr/fixpermissions.sh
+
+# lazylibrarian
+cd /opt/LazyLibrarian
+git remote rm origin
+git remote add origin https://gitlab.com/LazyLibrarian/LazyLibrarian.git
+git config master.remote origin
+git config master.merge refs/heads/master
+git stash clear
+git pull origin master
+git reset --hard origin/master
+git branch --set-upstream-to=origin/master master
+
+# ubooquity
+update-rc.d -f ubooquity remove
+rm /etc/init.d/ubooquity
+cp /opt/update/updates/configs/ubooquity.service /etc/systemd/system/ubooquity.service
+systemctl enable ubooquity.service
+
+# plexmediaserver
+echo deb https://downloads.plex.tv/repo/deb public main | sudo tee /etc/apt/sources.list.d/plexmediaserver.list
+curl https://downloads.plex.tv/plex-keys/PlexSign.key | sudo apt-key add -
+DEBIAN_FRONTEND=noninteractive APT_LISTCHANGES_FRONTEND=mail apt-get install -y plexmediaserver
+
+# tripple edit mopidy service fix
+cp /opt/update/updates/configs/mopidy.service /lib/systemd/system/mopidy.service
+systemctl daemon-reload
+
+## update version
+sed -i 's/2.*/2.9.1 Takashi Shimura/' /opt/openflixr/version
+crudini --set /usr/share/nginx/html/setup/config.ini custom custom1 2.9.1
+version=$(crudini --get /usr/share/nginx/html/setup/config.ini custom custom1)
+sed -i 's/Version.*/Version '$version'<\/span>/' /usr/share/nginx/html/openflixr/index.html
+
+## let system know update has been installed
+touch /opt/update/doneupdate/l_update_12
+
+# update everything else
+bash /opt/openflixr/updatewkly.sh
+
+## reboot
+reboot now

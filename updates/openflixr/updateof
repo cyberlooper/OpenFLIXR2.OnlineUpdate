@@ -44,6 +44,8 @@ cp /opt/update/updates/openflixr/letsencrypt.sh /opt/openflixr/letsencrypt.sh
 chmod +x /opt/openflixr/letsencrypt.sh
 cp /opt/update/updates/openflixr/cleanup.sh /opt/openflixr/cleanup.sh
 chmod +x /opt/openflixr/cleanup.sh
+cp /opt/update/updates/openflixr/fixpermissions.sh /opt/openflixr/fixpermissions.sh
+chmod +x /opt/openflixr/fixpermissions.sh
 
 ## Nginx config
 echo ""
@@ -51,15 +53,18 @@ echo "Create nginx config:"
 bash /opt/openflixr/createnginxconfig.sh
 
 ## Create Download dirs when mounted to a network share
-cd /opt/openflixr
 echo ""
-echo "create download dirs:"
-bash createdirs
+echo "Create Download Dirs:"
+bash /opt/openflixr/createdirs
 
-## hotfixes
+## Hotfixes
+echo ""
+echo "Hotfixes:"
 bash /opt/openflixr/hotfixes
 
 ## User script
+echo ""
+echo "Userscript:"
 bash /opt/openflixr/userscript.sh
 
 ## let setup know updateof finished

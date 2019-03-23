@@ -1,4 +1,5 @@
 location /spotweb {
+	http2_push_preload on;
 	auth_basic off;
 	allow 10.0.0.0/8;
 	allow 172.16.0.0/12;
@@ -14,6 +15,7 @@ if ($uri !~ "api/") {
 	}
 
 location ~ /spotweb/.+\.php$ {
+	http2_push_preload on;
 	fastcgi_split_path_info ^(.+\.php)(/.+)$;
 	fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
 	include fastcgi_params;
