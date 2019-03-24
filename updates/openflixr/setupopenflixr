@@ -5,6 +5,7 @@ THISUSER=$(whoami)
             echo 'You must use sudo to run this script, sorry!'
             exit 1
     fi
-
+    
+readonly ARGS=("$@")
 cd /opt/OpenFLIXR2.SetupScript
-bash main.sh
+bash main.sh "${ARGS[@]:-}"
