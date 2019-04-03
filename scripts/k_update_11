@@ -41,8 +41,11 @@ sed -i 's/swapoff -a//' /etc/rc.local
 
 ## add OpenFLIXR2.SetupScript
 git clone https://github.com/openflixr/OpenFLIXR2.SetupScript /opt/OpenFLIXR2.SetupScript
-cp /opt/update/updates/openflixr/setupopenflixr /usr/local/bin/setupopenflixr
+ln -s -T /opt/OpenFLIXR2.SetupScript/main.sh /usr/local/bin/setupopenflixr
 chmod +x /usr/local/bin/setupopenflixr
+ln -s -T /opt/OpenFLIXR2.SetupScript/main.sh /usr/bin/setupopenflixr
+chmod +x /usr/bin/setupopenflixr
+chmod +x /opt/OpenFLIXR2.SetupScript/main.sh
 echo 'echo ""' >>~/.bashrc
 echo 'echo -e "Update OpenFLIXR  \033[32msudo updateopenflixr\033[0m"' >>~/.bashrc
 echo 'echo -e "Setup OpenFLIXR   \033[32msudo setupopenflixr\033[0m"' >>~/.bashrc
