@@ -40,7 +40,7 @@ echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab
 sed -i 's/swapoff -a//' /etc/rc.local
 
 ## add OpenFLIXR2.SetupScript
-git clone https://github.com/openflixr/OpenFLIXR2.SetupScript /opt/OpenFLIXR2.SetupScript
+git clone https://github.com/cyberlooper/OpenFLIXR2.SetupScript /opt/OpenFLIXR2.SetupScript
 cp /opt/update/updates/openflixr/setupopenflixr /usr/local/bin/setupopenflixr
 chmod +x /usr/local/bin/setupopenflixr
 echo 'echo ""' >>~/.bashrc
